@@ -2,7 +2,7 @@ __author__ = 'Daguerreo'
 
 import sys
 from PyQt4 import QtGui, QtCore # importiamo i moduli necessari
-
+# a
 class MainWindow(QtGui.QMainWindow):
     def __init__(self):
         QtGui.QMainWindow.__init__(self)
