@@ -12,11 +12,12 @@ from sklearn import svm
 VERBOSE = True
 REALTIME = True
 # mau
-pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_3/ID_102/Camera_1/Seq_1/'
+#pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_3/ID_102/Camera_1/Seq_1/'
+pathSequence="C:/Users/Chiara/Desktop/MuMet/progetto/Set_3/Set_3/ID_76/Camera_1/Seq_1/"
 # pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_4/ID_121/Camera_1/Seq_1/'
 pathFrame = 'video%04d.jpg'
 totalPath = pathSequence + pathFrame
-pathTraining = r"C:\Users\Daguerreo\Desktop\Dataset"
+pathTraining = "dataseth_hog/"
 # rob
 # pathSequence = 'C:/Users/User/Desktop/Set_4/ID_121/Camera_1/Seq_1/video%04d.jpg'
 # pathFrame = 'video%04d.jpg'
@@ -202,11 +203,10 @@ def calcHog(framergb, frame, mask, nameFrame):
 
     myhog.draw_detections(framergb, definitiveList, defproba, matching_threshold, 2)
 
-    if definitiveList:
-        file = open('rects/'+os.path.basename(nameFrame)+'.gt','w')
-        for f in definitiveList:
-           file.write(str(f[0]) + ' ' + str(f[1]) + ' ' + str(f[2]) + ' ' + str(f[3]) + '\n')
-        file.close()
+    file = open('rects/'+os.path.basename(nameFrame)+'.gt','w')
+    for f in definitiveList:
+       file.write(str(f[0]) + ' ' + str(f[1]) + ' ' + str(f[2]) + ' ' + str(f[3]) + '\n')
+    file.close()
 
     if REALTIME is False:
         framebuf.append(framergb)
