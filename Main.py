@@ -11,26 +11,16 @@ from sklearn import svm
 
 VERBOSE = True
 REALTIME = True
-# mau
-#pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_3/ID_102/Camera_1/Seq_1/'
-pathSequence="C:/Users/Chiara/Desktop/MuMet/progetto/Set_3/Set_3/ID_76/Camera_1/Seq_1/"
-# pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_4/ID_121/Camera_1/Seq_1/'
-pathFrame = 'video%04d.jpg'
-totalPath = pathSequence + pathFrame
-pathTraining = "dataseth_hog/"
-# rob
-# pathSequence = 'C:/Users/User/Desktop/Set_4/ID_121/Camera_1/Seq_1/video%04d.jpg'
-# pathFrame = 'video%04d.jpg'
-# totalPath = pathSequence + pathFrame
-# chia
-#
-#
-#
 
-savePath = "save/"
-labelName = savePath + "label.pickle"
-trainlistName = savePath + "trainlistLinear.pickle"
-svmName = savePath + "svmLinear.pickle"
+pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_3/ID_76/Camera_1/Seq_1/'
+# pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_4/ID_123/Camera_8/Seq_1/'
+pathFrame = 'video%04d.jpg'
+pathComplete = pathSequence + pathFrame
+pathTraining = "Dataset/"
+pathSave = "save/"
+labelName = pathSave + "label.pickle"
+trainListName = pathSave + "trainListLinear.pickle"
+svmName = pathSave + "svmLinear.pickle"
 
 util = Util.Util()
 logger = Logger.Logger()
@@ -46,17 +36,17 @@ bgbuf = []
 step = 15
 orient = 8
 matching_threshold = 0.9
-mask_threshold = 0.3
+mask_threshold = 0.35
 minOverlap_x = 2*step
 minOverlap_y = 5*step
 scale = 1
 
 def main():
     personsFound = 0
-    index_frame = 0
-    cap = cv2.VideoCapture(totalPath)
+    index_frame = 1
+    cap = cv2.VideoCapture(pathComplete)
     namesFrameList = dm.getFigNames(pathSequence)
-    # fgbg = cv2.MOGBackgroundSubtractorMOG()
+    # fgbg = cv2.BackgroundSubtractorMOG()
     firstframe = cap.read()[1]
     firstframe = cv2.resize(firstframe,(0,0),None,0.8,0.8)
     average = np.float32(firstframe)
@@ -70,9 +60,18 @@ def main():
             break
 
         framergb = cv2.resize(framergb,(0,0),None,0.8,0.8)
+
+        # fgmask = fgbg.apply(framergb)
+        # element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+        # fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_DILATE, element)
+        # element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9))
+        # fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, element)
+        # fgmask = cv2.medianBlur(fgmask, 9)
+
         frame = cv2.cvtColor(framergb, cv2.COLOR_BGR2GRAY)
-        cv2.accumulateWeighted(framergb, average, 0.03)
+        cv2.accumulateWeighted(framergb, average, 0.02)
         background = cv2.convertScaleAbs(average)
+        h,v = util.getMaskHSV(framergb,background)
         background = cv2.cvtColor(background, cv2.COLOR_BGR2GRAY)
         mask = util.getMask(frame, background)
 
@@ -87,6 +86,8 @@ def main():
             cv2.imshow('original', framergb)
             cv2.imshow('mask', mask)
             # cv2.imshow('mask2', fgmask)
+            cv2.imshow('h',h)
+            cv2.imshow('v',v)
             c = cv2.waitKey(1)
             if c == ord(' '):
                 break
@@ -136,9 +137,9 @@ def train(svm, trainingPath, loadlbl=False, savelbl=True, loadtrain=True, savetr
             print 'training complete in ' + str(logger.timerRound()) + ' ms'
 
         if savetrain is True:
-            logger.save(labelTrainingList,trainlistName)
+            logger.save(labelTrainingList,trainListName)
     else:
-        labelTrainingList = logger.load(trainlistName)
+        labelTrainingList = logger.load(trainListName)
 
     if loadsvm is False:
         myhog.trainSVM(hogTrainingList,labelTrainingList)
