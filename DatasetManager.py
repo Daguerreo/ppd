@@ -9,13 +9,16 @@ class DatasetManager:
     def __init__(self):
         pass
 
-    def getFigNames(self,path):
+    def getFigNames(self,path,allPath=True):
         name_fig=[]
 
         for s in os.listdir(path):
             filename = os.path.basename(s)
-            if os.path.splitext(filename)[1] == '.jpg' or os.path.splitext(filename)[1] == '.bmp':
-                name_fig.append(s)
+            if os.path.splitext(filename)[1] == '.jpg' or os.path.splitext(filename)[1] == '.bmp' or os.path.splitext(filename)[1] == '.gt':
+                if allPath is True:
+                    name_fig.append(s)
+                else:
+                    name_fig.append(filename)
         return name_fig
 
     def getDataset(self, path):
