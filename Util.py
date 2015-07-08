@@ -37,18 +37,30 @@ class Util:
         mask = cv2.medianBlur(mask, 9)
         return mask
 
-    def getMaskHSV(self, frame, background):
+    def getMaskHSV(self, frame, background, channel='s'):
+        if channel == 'h':
+            c = 0
+        elif channel == 's':
+            c = 1
+        elif channel == 'v':
+            c = 2
+        else:
+            c = 0
+            print 'warning: wrong channel on getMaskHSV'
+
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         background = cv2.cvtColor(background, cv2.COLOR_BGR2HSV)
-        frameh = frame[:,:,1]
-        framev = frame[:,:,2]
-        bgh = background[:,:,1]
-        bgv = background[:,:,2]
+        ch = frame[:,:,c]
+        bg = background[:,:,c]
 
-        maskh = cv2.absdiff(frameh,bgh)
-        maskh = cv2.threshold(maskh,30,255,cv2.THRESH_BINARY)[1]
-        maskh = cv2.medianBlur(maskh, 5)
-        maskv = cv2.absdiff(framev,bgv)
-        maskv = cv2.threshold(maskv,30,255,cv2.THRESH_BINARY)[1]
-        maskv = cv2.medianBlur(maskv, 5)
-        return maskh, maskv
+        mask = cv2.absdiff(ch,bg)
+        mask = cv2.threshold(mask,30,255,cv2.THRESH_BINARY)[1]
+        mask = cv2.medianBlur(mask, 5)
+
+        element = cv2.getStructuringElement(cv2.MORPH_RECT,(3,3))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, element)
+        element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, element)
+        mask = cv2.medianBlur(mask, 9)
+
+        return mask
