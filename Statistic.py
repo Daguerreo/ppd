@@ -11,13 +11,13 @@ class Statistic:
     def __init__(self):
         pass
 
-    def calcAccuracy(self,pathGT,path, threshold):
+    def calcPositiveNegative(self,pathGT,path, threshold):
         dm=DatasetManager.DatasetManager()
 
-        TRUE_POSITIVE=0
-        TRUE_NEGATIVE=0
-        FALSE_POSITIVE=0
-        FALSE_NEGATIVE=0
+        TP=0
+        TN=0
+        FP=0
+        FN=0
 
 
         listGT=dm.getFigNames(pathGT,False)
@@ -36,7 +36,7 @@ class Statistic:
             fTest=fileTest.readlines()
 
             if not fGT and not fTest:
-                TRUE_NEGATIVE +=1
+                TN +=1
             elif fGT and fTest:
 
 
@@ -72,9 +72,9 @@ class Statistic:
                             flag1=True
 
                     if flag1 is False:
-                        FALSE_NEGATIVE +=1
+                        FN +=1
                     else:
-                        TRUE_POSITIVE +=1
+                        TP +=1
 
                 flag2=False
 
@@ -105,18 +105,35 @@ class Statistic:
                             flag2=True
 
                     if flag2 is False:
-                        FALSE_POSITIVE += 1
+                        FP += 1
 
             elif fGT and not fTest:
                 fileGT=open('groundtruth/'+listGT[i],'r')
                 fGT=fileGT.readlines()
 
-                FALSE_NEGATIVE += len(fGT)
+                FN += len(fGT)
 
             else:
-                FALSE_POSITIVE += len(fTest)
+                FP += len(fTest)
 
-        return TRUE_POSITIVE,TRUE_NEGATIVE,FALSE_POSITIVE,FALSE_NEGATIVE
+        return TP,TN,FP,FN
+
+    def calcPerformance(self, TP,TN,FP,FN ):
+        TP=float(TP)
+        TN=float(TN)
+        FP=float(FP)
+        FN=float(FN)
+
+        accuracy=(TP + TN)/(TN+TP+FN+FP)
+
+        recall=TP/(TP+FN)
+
+        precision=TP/(TP+FP)
+
+        f1score=2*TP/(2*TP+FP+FN)
+
+        return accuracy,recall,precision,f1score
+
 
 
 
