@@ -8,16 +8,21 @@ import Hog
 import Logger
 import os
 from sklearn import svm
+import Statistic
 
 VERBOSE = True
 REALTIME = True
 
 # pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_3/ID_76/Camera_1/Seq_1/'
-pathSequence = 'sequences/Set_4/ID_123/Camera_8/Seq_1/'
+#pathSequence = 'sequences/Set_4/ID_123/Camera_8/Seq_1/'
+pathSequence='C:/Users/Chiara/Desktop/MuMet/progetto/Set_3/Set_3/ID_76/Camera_1/Seq_1/'
 pathFrame = 'video%04d.jpg'
 pathComplete = pathSequence + pathFrame
 pathTraining = "dataset/"
 pathSave = "save/"
+pathGT="groundtruth/Set_3/ID_76/Camera_1/Seq_1/"
+pathTest="rects/"
+
 labelName = pathSave + "label.pickle"
 trainListName = pathSave + "trainListLinear.pickle"
 svmName = pathSave + "svmLinear.pickle"
@@ -25,6 +30,8 @@ svmName = pathSave + "svmLinear.pickle"
 util = Util.Util()
 logger = Logger.Logger()
 dm = DatasetManager.DatasetManager()
+stat=Statistic.Statistic()
+
 # mysvm = svm.SVC(kernel=intersectionKernel, C=10, probability=True)
 mysvm = svm.SVC(probability=True)
 myhog = Hog.Hog(mysvm)
@@ -103,6 +110,16 @@ def main():
             c = cv2.waitKey(50)
             if c == ord(' '):
                 break
+
+
+    TP,TN,FP,FN= stat.calcPositiveNegative(pathGT,pathTest,24)
+    print "TP="+str(TP)+", TN="+str(TN)+", FP="+str(FP)+", FN="+str(FN)
+    accuracy,recall,precision,f1score=stat.calcPerformance(TP,TN,FP,FN)
+    print "Accuracy="+str(accuracy)
+    print "Recall="+str(recall)
+    print "Precision="+str(precision)
+    print "F1 Score="+str(f1score)
+
     return
 
 def train(svm, trainingPath, loadlbl=True, savelbl=False, loadtrain=True, savetrain=False, loadsvm=True, savesm=False):

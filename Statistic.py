@@ -29,8 +29,8 @@ class Statistic:
             #se trova il corrispettivo vuol dire che in un frame dove veramente c'erano persone, HOG ne ha trovata almeno una
 
             #apre il file di testo e accede ad ogni riga = ogni riga c'e' un rect
-            fileGT=open('groundtruth/'+listGT[i],'r')
-            fileTest=open('rects/'+listTest[i],'r')
+            fileGT=open(pathGT+listGT[i],'r')
+            fileTest=open(path+listTest[i],'r')
 
             fGT=fileGT.readlines()
             fTest=fileTest.readlines()
@@ -108,7 +108,7 @@ class Statistic:
                         FP += 1
 
             elif fGT and not fTest:
-                fileGT=open('groundtruth/'+listGT[i],'r')
+                fileGT=open(pathGT+listGT[i],'r')
                 fGT=fileGT.readlines()
 
                 FN += len(fGT)
