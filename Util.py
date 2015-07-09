@@ -55,7 +55,7 @@ class Util:
 
         mask = cv2.absdiff(ch,bg)
         mask = cv2.threshold(mask,30,255,cv2.THRESH_BINARY)[1]
-        mask = cv2.medianBlur(mask, 5)
+        mask = cv2.medianBlur(mask, 7)
 
         element = cv2.getStructuringElement(cv2.MORPH_RECT,(3,3))
         mask = cv2.morphologyEx(mask, cv2.MORPH_DILATE, element)

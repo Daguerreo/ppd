@@ -13,15 +13,19 @@ import Statistic
 VERBOSE = True
 REALTIME = True
 
-# pathSequence = 'C:/Users/Daguerreo/Documents/dataset/Set_3/ID_76/Camera_1/Seq_1/'
-#pathSequence = 'sequences/Set_4/ID_123/Camera_8/Seq_1/'
-pathSequence='C:/Users/Chiara/Desktop/MuMet/progetto/Set_3/Set_3/ID_76/Camera_1/Seq_1/'
 pathFrame = 'video%04d.jpg'
-pathComplete = pathSequence + pathFrame
 pathTraining = "dataset/"
 pathSave = "save/"
-pathGT="groundtruth/Set_3/ID_76/Camera_1/Seq_1/"
-pathTest="rects/"
+sequence = "sequences/"
+groundtruth = "groundtruth/"
+pathTest = "rects/"
+
+# pathFolder = "Set_3/ID_80/Camera_1/Seq_1/"
+pathFolder = "/Set_4/ID_122/Camera_8/Seq_3/"
+# pathFolder = "Set_4/ID_123/Camera_8/Seq_1/"
+pathSequence = sequence + pathFolder
+pathGT = groundtruth + pathFolder
+pathComplete = pathSequence + pathFrame
 
 labelName = pathSave + "label.pickle"
 trainListName = pathSave + "trainListLinear.pickle"
@@ -80,8 +84,9 @@ def main():
         cv2.accumulateWeighted(framergb, average, 0.02)
         background = cv2.convertScaleAbs(average)
         mask = util.getMaskHSV(framergb,background)
-        # background = cv2.cvtColor(background, cv2.COLOR_BGR2GRAY)
-        # mask = util.getMask(frame, background)
+        background = cv2.cvtColor(background, cv2.COLOR_BGR2GRAY)
+        maskgray = util.getMask(frame, background)
+        mask += maskgray
 
         if REALTIME is False:
             maskbuf.append(mask)
@@ -112,13 +117,13 @@ def main():
                 break
 
 
-    TP,TN,FP,FN= stat.calcPositiveNegative(pathGT,pathTest,24)
-    print "TP="+str(TP)+", TN="+str(TN)+", FP="+str(FP)+", FN="+str(FN)
+    TP, TN, FP, FN = stat.calcPositiveNegative(pathGT,pathTest,24)
+    print "TP = "+str(TP)+", TN = "+str(TN)+", FP = "+str(FP)+", FN = "+str(FN)
     accuracy,recall,precision,f1score=stat.calcPerformance(TP,TN,FP,FN)
-    print "Accuracy="+str(accuracy)
-    print "Recall="+str(recall)
-    print "Precision="+str(precision)
-    print "F1 Score="+str(f1score)
+    print "Accuracy = "+str(accuracy)
+    print "Recall = "+str(recall)
+    print "Precision = "+str(precision)
+    print "F1 Score = "+str(f1score)
 
     return
 
@@ -174,8 +179,8 @@ def train(svm, trainingPath, loadlbl=True, savelbl=False, loadtrain=True, savetr
     return
 
 def calcHog(framergb, frame, mask, nameFrame):
-    positionList=[]
-    probaList=[]
+    positionList = []
+    probaList = []
     totalRect = 0
     widthROI = int(48*scale)
     heightROI = int(128*scale)
@@ -200,21 +205,21 @@ def calcHog(framergb, frame, mask, nameFrame):
                     # if VERBOSE is True:
                     #     print 'person found: ' + str(proba)
 
-    subjectLength=len(positionList)
-    fuoriList=[]
+    subjectLength = len(positionList)
+    fuoriList = []
 
     for i in range(subjectLength - 1, -1, -1):
         for j in range(subjectLength - 1, -1, -1):
             if i != j:
-                check,k=myhog.checkIntersections(positionList[i],positionList[j],probaList[i],probaList[j],minOverlap_x,minOverlap_y)
+                check, k = myhog.checkIntersections(positionList[i],positionList[j],probaList[i],probaList[j],minOverlap_x,minOverlap_y)
                 if check is True:
-                    if k==0:
+                    if k == 0:
                         fuoriList.append(i)
                     else:
                         fuoriList.append(j)
 
-    definitiveList=[]
-    defproba=[]
+    definitiveList = []
+    defproba = []
     for i in range(0,len(positionList)):
         if i not in fuoriList:
             definitiveList.append(positionList[i])

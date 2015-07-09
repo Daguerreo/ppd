@@ -7,11 +7,10 @@ import math
 
 
 class Statistic:
-
     def __init__(self):
         pass
 
-    def calcPositiveNegative(self,pathGT,path, threshold):
+    def calcPositiveNegative(self, pathGT, path,threshold):
         dm=DatasetManager.DatasetManager()
 
         TP=0
@@ -19,55 +18,52 @@ class Statistic:
         FP=0
         FN=0
 
+        listGT = dm.getFigNames(pathGT,False)
+        # listGT = lista dei basename dei frame
+        listTest = dm.getFigNames(path,False)
 
-        listGT=dm.getFigNames(pathGT,False)
-        #listGT=lista dei basename dei frame
-        listTest=dm.getFigNames(path,False)
-
-        #scorri lista GT e per ogni elemento della lista cerca se c'e' lo stesso frame nella lista del Test
+        # scorri lista GT e per ogni elemento della lista cerca se c'e' lo stesso frame nella lista del Test
         for i in range(len(listGT)):
-            #se trova il corrispettivo vuol dire che in un frame dove veramente c'erano persone, HOG ne ha trovata almeno una
+            # se trova il corrispettivo vuol dire che in un frame dove veramente c'erano persone,
+            # HOG ne ha trovata almeno una
 
-            #apre il file di testo e accede ad ogni riga = ogni riga c'e' un rect
-            fileGT=open(pathGT+listGT[i],'r')
-            fileTest=open(path+listTest[i],'r')
+            # apre il file di testo e accede ad ogni riga = ogni riga c'e' un rect
+            fileGT = open(pathGT+listGT[i],'r')
+            fileTest = open(path+listTest[i],'r')
 
-            fGT=fileGT.readlines()
-            fTest=fileTest.readlines()
+            fGT = fileGT.readlines()
+            fTest = fileTest.readlines()
 
             if not fGT and not fTest:
                 TN +=1
             elif fGT and fTest:
-
-
                 flag1=False
 
-
-                #per ogni riga di fileGT confronta con tutte le righe di fileTest
+                # per ogni riga di fileGT confronta con tutte le righe di fileTest
                 for s in fGT:
-                    sl=s.split(' ')
-                    rectGT=(int(sl[0]),int(sl[1]),int(sl[2]),int(sl[3]))
+                    sl = s.split(' ')
+                    rectGT = (int(sl[0]), int(sl[1]), int(sl[2]), int(sl[3]))
                     for c in fTest:
-                        cl=c.split(' ')
-                        rectTest=(int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
+                        cl = c.split(' ')
+                        rectTest = (int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
 
                         #calcola le coordinate dell'intersezione
-                        x3=max(rectGT[0],rectTest[0])
-                        y3=max(rectGT[1],rectTest[1])
+                        x3 = max(rectGT[0],rectTest[0])
+                        y3 = max(rectGT[1],rectTest[1])
 
-                        x4=min(rectGT[2],rectTest[2])
-                        y4=min(rectGT[3],rectTest[3])
+                        x4 = min(rectGT[2],rectTest[2])
+                        y4 = min(rectGT[3],rectTest[3])
 
-                        #calcola le aree
-                        blockArea=float(np.abs(x3-x4)*np.abs(y3-y4))
-                        area1=float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
-                        area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
+                        # calcola le aree
+                        blockArea = float(np.abs(x3-x4)*np.abs(y3-y4))
+                        area1 = float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
+                        area2 = float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
 
-                        #percentuale di intersezione
-                        #overlap=blockArea/(area1+area2+blockArea)
-                        overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
+                        # percentuale di intersezione
+                        # overlap=blockArea/(area1+area2+blockArea)
+                        overlap = math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
 
-                        #se c'e' abbastanza intersezione vuol dire che i due rect corrispondono
+                        # se c'e' abbastanza intersezione vuol dire che i due rect corrispondono
                         if overlap > threshold:
                             flag1=True
 
@@ -78,7 +74,8 @@ class Statistic:
 
                 flag2=False
 
-                #per ogni riga di fileTest confronta con tutte le righe di fileGT: i true positive li abbiamo gia calcolati
+                # per ogni riga di fileTest confronta con tutte le righe di fileGT:
+                # i true positive li abbiamo gia calcolati
 
                 for c in fTest:
                     cl=c.split(' ')
@@ -100,8 +97,7 @@ class Statistic:
                         #overlap=blockArea/(area1+area2+blockArea)
                         overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
 
-
-                        if overlap >threshold:
+                        if overlap > threshold:
                             flag2=True
 
                     if flag2 is False:
@@ -118,24 +114,18 @@ class Statistic:
 
         return TP,TN,FP,FN
 
-    def calcPerformance(self, TP,TN,FP,FN ):
+    def calcPerformance(self, TP, TN, FP, FN):
         TP=float(TP)
         TN=float(TN)
         FP=float(FP)
         FN=float(FN)
 
-        accuracy=(TP + TN)/(TN+TP+FN+FP)
-
-        recall=TP/(TP+FN)
-
-        precision=TP/(TP+FP)
-
-        f1score=2*TP/(2*TP+FP+FN)
+        accuracy = (TP + TN)/(TN+TP+FN+FP)
+        recall = TP/(TP+FN)
+        precision = TP/(TP+FP)
+        f1score = 2*TP/(2*TP+FP+FN)
 
         return accuracy,recall,precision,f1score
-
-
-
 
     def calcAccuracy_per_i_posteri(self,pathGT,path, threshold):
         dm=DatasetManager.DatasetManager()
@@ -145,17 +135,17 @@ class Statistic:
         FALSE_POSITIVE=0
         FALSE_NEGATIVE=0
 
-        
         listGT=dm.getFigNames(pathGT,False)
-        #listGT=lista dei basename dei frame
+        # listGT=lista dei basename dei frame
         listTest=dm.getFigNames(path,False)
 
-        #scorri lista GT e per ogni elemento della lista cerca se c'e' lo stesso frame nella lista del Test
+        # scorri lista GT e per ogni elemento della lista cerca se c'e' lo stesso frame nella lista del Test
         for i in range(len(listGT)):
             if listGT[i] in listTest:
-                #se trova il corrispettivo vuol dire che in un frame dove veramente c'erano persone, HOG ne ha trovata almeno una
+                # se trova il corrispettivo vuol dire che in un frame dove veramente c'erano persone,
+                # HOG ne ha trovata almeno una
 
-                #apre il file di testo e accede ad ogni riga = ogni riga c'e' un rect
+                # apre il file di testo e accede ad ogni riga = ogni riga c'e' un rect
                 fileGT=open('groundtruth/'+listGT[i],'r')
 
                 k=listTest.index(listGT[i])
@@ -165,7 +155,7 @@ class Statistic:
                 fTest=fileTest.readlines()
                 flag1=False
 
-                #per ogni riga di fileGT confronta con tutte le righe di fileTest
+                # per ogni riga di fileGT confronta con tutte le righe di fileTest
                 for s in fGT:
                     sl=s.split(' ')
                     rectGT=(int(sl[0]),int(sl[1]),int(sl[2]),int(sl[3]))
@@ -180,16 +170,16 @@ class Statistic:
                         x4=min(rectGT[2],rectTest[2])
                         y4=min(rectGT[3],rectTest[3])
 
-                        #calcola le aree
+                        # calcola le aree
                         blockArea=float(np.abs(x3-x4)*np.abs(y3-y4))
                         area1=float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
                         area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
 
-                        #percentuale di intersezione
-                        #overlap=blockArea/(area1+area2+blockArea)
+                        # percentuale di intersezione
+                        # overlap=blockArea/(area1+area2+blockArea)
                         overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
 
-                        #se c'e' abbastanza intersezione vuol dire che i due rect corrispondono
+                        # se c'e' abbastanza intersezione vuol dire che i due rect corrispondono
                         if overlap > threshold:
                             flag1=True
 
@@ -200,7 +190,8 @@ class Statistic:
 
                 flag2=False
 
-                #per ogni riga di fileTest confronta con tutte le righe di fileGT: i true positive li abbiamo gia calcolati
+                # per ogni riga di fileTest confronta con tutte le righe di fileGT:
+                # i true positive li abbiamo gia calcolati
 
                 for c in fTest:
                     cl=c.split(' ')
@@ -219,9 +210,8 @@ class Statistic:
                         area1=float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
                         area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
 
-                        #overlap=blockArea/(area1+area2+blockArea)
+                        # overlap=blockArea/(area1+area2+blockArea)
                         overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
-
 
                         if overlap >threshold:
                             flag2=True
@@ -243,20 +233,3 @@ class Statistic:
                 FALSE_POSITIVE += len(fTest)
 
         return TRUE_POSITIVE,TRUE_NEGATIVE,FALSE_POSITIVE,FALSE_NEGATIVE
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
