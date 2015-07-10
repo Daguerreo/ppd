@@ -8,11 +8,11 @@ from sklearn.externals import joblib
 import pickle
 
 class Hog:
-    def __init__(self, svm):
-        self.svm = svm
+    def __init__(self, clf):
+        self.clf = clf
 
     def setSVM(self, svm):
-        self.svm = svm
+        self.clf = svm
         return
 
     def intersectionKernel(self,x, y):
@@ -51,8 +51,8 @@ class Hog:
         hist = hog(window, orientation, pixelxcell, cellsxblock)
         return hist
 
-    def trainSVM(self, hogTrainingList, labels):
-        self.svm.fit(hogTrainingList, labels)
+    def trainCLF(self, hogTrainingList, labels):
+        self.clf.fit(hogTrainingList, labels)
         return
 
     # window e la finestrella dove potrebbe esserci una persona
@@ -60,7 +60,7 @@ class Hog:
         window=cv2.resize(window,(48,128))
         hist = self.calcHog(window, orientation, pixelxcell, cellsxblock)
         #lbl = self.svm.predict(hist)
-        proba = self.svm.predict_proba(hist)
+        proba = self.clf.predict_proba(hist)
         if proba[0][1] > proba[0][0]:
             return True, proba
         else:

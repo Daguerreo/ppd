@@ -9,6 +9,7 @@ import Logger
 import os
 from sklearn import svm
 import Statistic
+from sklearn.ensemble import RandomForestClassifier
 
 VERBOSE = True
 REALTIME = True
@@ -20,16 +21,16 @@ sequence = "sequences/"
 groundtruth = "groundtruth/"
 pathTest = "rects/"
 
-# pathFolder = "Set_3/ID_80/Camera_1/Seq_1/"
-pathFolder = "/Set_4/ID_122/Camera_8/Seq_3/"
-# pathFolder = "Set_4/ID_123/Camera_8/Seq_1/"
+# pathFolder = "Set_3/ID_89/Camera_1/Seq_1/"
+# pathFolder = "Set_4/ID_122/Camera_8/Seq_3/"
+pathFolder = "Set_4/ID_139/Camera_8/Seq_1/"
 pathSequence = sequence + pathFolder
 pathGT = groundtruth + pathFolder
 pathComplete = pathSequence + pathFrame
 
 labelName = pathSave + "label.pickle"
-trainListName = pathSave + "trainListLinear.pickle"
-svmName = pathSave + "svmLinear.pickle"
+trainListName = pathSave + "trainList.pickle"
+clfName = pathSave + "svm.pickle"
 
 util = Util.Util()
 logger = Logger.Logger()
@@ -38,6 +39,7 @@ stat=Statistic.Statistic()
 
 # mysvm = svm.SVC(kernel=intersectionKernel, C=10, probability=True)
 mysvm = svm.SVC(probability=True)
+# mysvm = RandomForestClassifier(n_estimators=100)
 myhog = Hog.Hog(mysvm)
 framebuf = []
 roimaskbuf = []
@@ -51,34 +53,27 @@ mask_threshold = 0.3
 minOverlap_x = 2*step
 minOverlap_y = 5*step
 scale = 1
+frameScale = 0.7
 
 def main():
     personsFound = 0
     index_frame = 1
     cap = cv2.VideoCapture(pathComplete)
     namesFrameList = dm.getFigNames(pathSequence)
-    # fgbg = cv2.BackgroundSubtractorMOG()
     firstframe = cap.read()[1]
-    firstframe = cv2.resize(firstframe,(0,0),None,0.8,0.8)
+    firstframe = cv2.resize(firstframe,(0,0),None,frameScale,frameScale)
     average = np.float32(firstframe)
-    cv2.accumulateWeighted(firstframe, average, 0.1)
+    cv2.accumulateWeighted(firstframe, average, 0.2)
     logger.timerStart()
-    # train(mysvm, pathTraining,False,True,False,True,False,True)
-    train(mysvm, pathTraining)
+    train(mysvm, pathTraining,True,False,False,True,False,True)
+    # train(mysvm, pathTraining)
 
     while cap.isOpened():
         success, framergb = cap.read()
         if not success:
             break
 
-        framergb = cv2.resize(framergb,(0,0),None,0.8,0.8)
-
-        # fgmask = fgbg.apply(framergb)
-        # element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
-        # fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_DILATE, element)
-        # element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9))
-        # fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, element)
-        # fgmask = cv2.medianBlur(fgmask, 9)
+        framergb = cv2.resize(framergb,(0,0),None,frameScale,frameScale)
 
         frame = cv2.cvtColor(framergb, cv2.COLOR_BGR2GRAY)
         cv2.accumulateWeighted(framergb, average, 0.02)
@@ -86,6 +81,7 @@ def main():
         mask = util.getMaskHSV(framergb,background)
         background = cv2.cvtColor(background, cv2.COLOR_BGR2GRAY)
         maskgray = util.getMask(frame, background)
+        # maskMog = util.getMaskMog(framergb)
         mask += maskgray
 
         if REALTIME is False:
@@ -99,8 +95,8 @@ def main():
         if REALTIME is True:
             cv2.imshow('original', framergb)
             cv2.imshow('mask', mask)
-            # cv2.imshow('mask2', fgmask)
-            # cv2.imshow('h',h)
+            # cv2.imshow('mog', maskMog)
+
             c = cv2.waitKey(1)
             if c == ord(' '):
                 break
@@ -165,15 +161,15 @@ def train(svm, trainingPath, loadlbl=True, savelbl=False, loadtrain=True, savetr
         labelTrainingList = logger.load(trainListName)
 
     if loadsvm is False:
-        myhog.trainSVM(hogTrainingList,labelTrainingList)
+        myhog.trainCLF(hogTrainingList,labelTrainingList)
 
         if VERBOSE is True:
             print 'SVM training complete in ' + str(logger.timerRound()) + ' ms'
 
         if savesm is True:
-            logger.save(svm,svmName)
+            logger.save(svm,clfName)
     else:
-        svm = logger.load(svmName)
+        svm = logger.load(clfName)
         myhog.setSVM(svm)
 
     return
@@ -238,4 +234,11 @@ def calcHog(framergb, frame, mask, nameFrame):
     return totalRect, len(definitiveList)
 ########################################################################################
 # program start here
+def set_global_var(realtime, verbose):
+    global REALTIME
+    global VERBOSE
+    REALTIME = realtime
+    VERBOSE = verbose
+    return
+
 main()

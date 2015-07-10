@@ -5,6 +5,7 @@ import cv2
 
 class Util:
     def __init__(self):
+        self.fgbg = cv2.BackgroundSubtractorMOG()
         pass
 
     def getROI(self, img, edge, sizex, sizey):
@@ -64,3 +65,13 @@ class Util:
         mask = cv2.medianBlur(mask, 9)
 
         return mask
+
+    def getMaskMog(self, frame):
+        fgmask = self.fgbg.apply(frame)
+        element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+        fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_DILATE, element)
+        element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9))
+        fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, element)
+        fgmask = cv2.medianBlur(fgmask, 9)
+
+        return fgmask
