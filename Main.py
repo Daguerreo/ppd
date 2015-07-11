@@ -8,7 +8,7 @@ import Hog
 import Logger
 import os
 from sklearn import svm
-import Statistic
+import Statistic#
 from sklearn.ensemble import RandomForestClassifier
 
 VERBOSE = True
@@ -17,7 +17,7 @@ REALTIME = True
 pathFrame = 'video%04d.jpg'
 pathTraining = "dataset/"
 pathSave = "save/"
-sequence = "sequences/"
+sequence = "C:/Users/Chiara/Desktop/MuMet/progetto/Set_3/"
 groundtruth = "groundtruth/"
 pathTest = "rects/"
 
@@ -46,12 +46,16 @@ roimaskbuf = []
 maskbuf = []
 bgbuf = []
 
+#cancella il contenuto di rects prima di iniziare
+util.delFolderContent('rects/')
+
 step = 15
 orient = 8
 matching_threshold = 0.9
 mask_threshold = 0.3
 minOverlap_x = 2*step
 minOverlap_y = 5*step
+
 scale = 1
 frameScale = 0.7
 
@@ -242,3 +246,5 @@ def set_global_var(realtime, verbose):
     return
 
 main()
+while True:
+    print "Vercellino will kill you!!!!!"

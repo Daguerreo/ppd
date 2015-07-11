@@ -14,7 +14,7 @@ class DatasetManager:
 
         for s in os.listdir(path):
             filename = os.path.basename(s)
-            if os.path.splitext(filename)[1] == '.jpg' or os.path.splitext(filename)[1] == '.bmp' or os.path.splitext(filename)[1] == '.gt':
+            if os.path.splitext(filename)[1] == '.jpg' or os.path.splitext(filename)[1] == '.bmp' or os.path.splitext(filename)[1] == '.gt' or os.path.splitext(filename)[1] == '.png':
                 if allPath is True:
                     name_fig.append(s)
                 else:
