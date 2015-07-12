@@ -42,7 +42,8 @@ class Statistic:
                 # per ogni riga di fileGT confronta con tutte le righe di fileTest
                 for s in fGT:
                     sl = s.split(' ')
-                    rectGT = (int(sl[0]), int(sl[1]), int(sl[2]), int(sl[3]))
+                    #rectGT = (int(sl[0]), int(sl[1]), int(sl[2]), int(sl[3]))
+                    rectGT = (int(sl[0])*0.8, int(sl[1])*0.8, int(sl[2])*0.8, int(sl[3])*0.8)
                     for c in fTest:
                         cl = c.split(' ')
                         rectTest = (int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
@@ -122,18 +123,22 @@ class Statistic:
 
         accuracy = (TP + TN)/(TN+TP+FN+FP)
         recall = TP/(TP+FN)
-        precision = TP/(TP+FP)
         f1score = 2*TP/(2*TP+FP+FN)
+
+        if TP== 0 and FP == 0:
+            precision= 0.0
+        else:
+            precision = TP/(TP+FP)
 
         return accuracy,recall,precision,f1score
 
-    def calcAccuracy_per_i_posteri(self,pathGT,path, threshold):
+    def calcAccuracy_per_i_posteri(self,pathGT,path,threshold):
         dm=DatasetManager.DatasetManager()
 
-        TRUE_POSITIVE=0
-        TRUE_NEGATIVE=0
-        FALSE_POSITIVE=0
-        FALSE_NEGATIVE=0
+        TP=0
+        TN=0
+        FP=0
+        FN=0
 
         listGT=dm.getFigNames(pathGT,False)
         # listGT=lista dei basename dei frame
@@ -146,10 +151,10 @@ class Statistic:
                 # HOG ne ha trovata almeno una
 
                 # apre il file di testo e accede ad ogni riga = ogni riga c'e' un rect
-                fileGT=open('groundtruth/'+listGT[i],'r')
+                fileGT=open(pathGT+listGT[i],'r')
 
                 k=listTest.index(listGT[i])
-                fileTest=open('rects/'+listTest[k],'r')
+                fileTest=open(path+listTest[k],'r')
 
                 fGT=fileGT.readlines()
                 fTest=fileTest.readlines()
@@ -158,7 +163,8 @@ class Statistic:
                 # per ogni riga di fileGT confronta con tutte le righe di fileTest
                 for s in fGT:
                     sl=s.split(' ')
-                    rectGT=(int(sl[0]),int(sl[1]),int(sl[2]),int(sl[3]))
+                    rectGT=(int(sl[0])*0.8,int(sl[1])*0.8,int(sl[2])*0.8,int(sl[3])*0.8)
+                    #rectGT=(int(sl[0]),int(sl[1]),int(sl[2]),int(sl[3]))
                     for c in fTest:
                         cl=c.split(' ')
                         rectTest=(int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
@@ -184,9 +190,9 @@ class Statistic:
                             flag1=True
 
                     if flag1 is False:
-                        FALSE_NEGATIVE +=1
+                        FN +=1
                     else:
-                        TRUE_POSITIVE +=1
+                        TP +=1
 
                 flag2=False
 
@@ -217,19 +223,19 @@ class Statistic:
                             flag2=True
 
                     if flag2 is False:
-                        FALSE_POSITIVE += 1
+                        FP += 1
 
             else:
-                fileGT=open('groundtruth/'+listGT[i],'r')
+                fileGT=open(pathGT+listGT[i],'r')
                 fGT=fileGT.readlines()
 
-                FALSE_NEGATIVE += len(fGT)
+                FN += len(fGT)
 
         for i in range(len(listTest)):
             if listTest[i] not in listGT:
-                fileTest=open('rects/'+listTest[i],'r')
+                fileTest=open(path+listTest[i],'r')
                 fTest=fileTest.readlines()
 
-                FALSE_POSITIVE += len(fTest)
+                FP += len(fTest)
 
-        return TRUE_POSITIVE,TRUE_NEGATIVE,FALSE_POSITIVE,FALSE_NEGATIVE
+        return TP,TN,FP,FN
