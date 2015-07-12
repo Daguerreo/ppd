@@ -4,6 +4,7 @@ import os
 import DatasetManager
 import numpy as np
 import math
+import cv2
 
 
 class Statistic:
@@ -42,28 +43,40 @@ class Statistic:
                 # per ogni riga di fileGT confronta con tutte le righe di fileTest
                 for s in fGT:
                     sl = s.split(' ')
-                    #rectGT = (int(sl[0]), int(sl[1]), int(sl[2]), int(sl[3]))
-                    rectGT = (int(sl[0])*windowscale, int(sl[1])*windowscale, int(sl[2])*windowscale, int(sl[3])*windowscale)
+                    #rectGT = (int(sl[0]), int(sl[1]),int(sl[0])+int(sl[2]),  int(sl[1])+int(sl[3]))
+                    a = int(int(sl[0])*windowscale)
+                    b = int(int(sl[1])*windowscale)
+                    c = int(int(sl[0])*windowscale) + int(int(sl[2])*windowscale)
+                    d = int(int(sl[1])*windowscale) + int(int(sl[3])*windowscale)
+                    rectGT = (a,b,c,d)
                     for c in fTest:
                         cl = c.split(' ')
                         rectTest = (int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
 
-                        #calcola le coordinate dell'intersezione
-                        x3 = max(rectGT[0],rectTest[0])
-                        y3 = max(rectGT[1],rectTest[1])
+                        #print rectGT
+                        #print rectTest
 
-                        x4 = min(rectGT[2],rectTest[2])
-                        y4 = min(rectGT[3],rectTest[3])
+                        #frame=frames
+                        #cv2.rectangle(frame, (rectGT[0], rectGT[1]), (rectGT[2], rectGT[3]), (0, 0, 255), 3)
+                        #cv2.rectangle(frame, (rectTest[0], rectTest[1]), (rectTest[2], rectTest[3]), (255, 0, 0), 3)
+                        #cv2.imshow("ciccio",frame)
+                        #cv2.waitKey()
+                        #calcola le coordinate dell'intersezione
+                        # x3 = max(rectGT[0],rectTest[0])
+                        # y3 = max(rectGT[1],rectTest[1])
+
+                        # x4 = min(rectGT[2],rectTest[2])
+                        # y4 = min(rectGT[3],rectTest[3])
 
                         # calcola le aree
-                        blockArea = float(np.abs(x3-x4)*np.abs(y3-y4))
-                        area1 = float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
-                        area2 = float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
+                        #blockArea = float(np.abs(x3-x4)*np.abs(y3-y4))
+                        #area1 = float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
+                        #area2 = float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
 
                         # percentuale di intersezione
                         # overlap=blockArea/(area1+area2+blockArea)
                         overlap = math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
-
+                        overlap=np.sqrt((rectGT[0]-rectGT[1])**2+(rectTest[0]-rectTest[1])**2)
                         # se c'e' abbastanza intersezione vuol dire che i due rect corrispondono
                         if overlap > threshold:
                             flag1=True
@@ -83,21 +96,26 @@ class Statistic:
                     rectTest=(int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
                     for s in fGT:
                         sl=s.split(' ')
-                        rectGT=(int(sl[0])*windowscale,int(sl[1])*windowscale,int(sl[2])*windowscale,int(sl[3])*windowscale)
+                        a = int(int(sl[0])*windowscale)
+                        b = int(int(sl[1])*windowscale)
+                        c = int(int(sl[0])*windowscale) + int(int(sl[2])*windowscale)
+                        d = int(int(sl[1])*windowscale) + int(int(sl[3])*windowscale)
+                        rectGT = (a,b,c,d)
 
-                        x3=max(rectGT[0],rectTest[0])
-                        y3=max(rectGT[1],rectTest[1])
 
-                        x4=min(rectGT[2],rectTest[2])
-                        y4=min(rectGT[3],rectTest[3])
+                        # x3=max(rectGT[0],rectTest[0])
+                        # y3=max(rectGT[1],rectTest[1])
 
-                        blockArea=float(np.abs(x3-x4)*np.abs(y3-y4))
-                        area1=float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
-                        area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
+                        # x4=min(rectGT[2],rectTest[2])
+                        # y4=min(rectGT[3],rectTest[3])
+
+                        #blockArea=float(np.abs(x3-x4)*np.abs(y3-y4))
+                        #area1=float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
+                        #area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
 
                         #overlap=blockArea/(area1+area2+blockArea)
-                        overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
-
+                        #overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
+                        overlap=np.sqrt((rectGT[0]-rectGT[1])**2+(rectTest[0]-rectTest[1])**2)
                         if overlap > threshold:
                             flag2=True
 
@@ -163,7 +181,11 @@ class Statistic:
                 # per ogni riga di fileGT confronta con tutte le righe di fileTest
                 for s in fGT:
                     sl=s.split(' ')
-                    rectGT=(int(sl[0])*windowscale,int(sl[1])*windowscale,int(sl[2])*windowscale,int(sl[3])*windowscale)
+                    a = int(int(sl[0])*windowscale)
+                    b = int(int(sl[1])*windowscale)
+                    c = int(int(sl[0])*windowscale) + int(int(sl[2])*windowscale)
+                    d = int(int(sl[1])*windowscale) + int(int(sl[3])*windowscale)
+                    rectGT = (a,b,c,d)
                     #rectGT=(int(sl[0]),int(sl[1]),int(sl[2]),int(sl[3]))
                     for c in fTest:
                         cl=c.split(' ')
@@ -182,8 +204,8 @@ class Statistic:
                         area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
 
                         # percentuale di intersezione
-                        # overlap=blockArea/(area1+area2+blockArea)
-                        overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
+                        overlap=blockArea/(area1+area2+blockArea)
+                        #overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
 
                         # se c'e' abbastanza intersezione vuol dire che i due rect corrispondono
                         if overlap > threshold:
@@ -204,7 +226,11 @@ class Statistic:
                     rectTest=(int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
                     for s in fGT:
                         sl=s.split(' ')
-                        rectGT=(int(sl[0])*windowscale,int(sl[1])*windowscale,int(sl[2])*windowscale,int(sl[3])*windowscale)
+                        a = int(int(sl[0])*windowscale)
+                        b = int(int(sl[1])*windowscale)
+                        c = int(int(sl[0])*windowscale) + int(int(sl[2])*windowscale)
+                        d = int(int(sl[1])*windowscale) + int(int(sl[3])*windowscale)
+                        rectGT = (a,b,c,d)
 
                         x3=max(rectGT[0],rectTest[0])
                         y3=max(rectGT[1],rectTest[1])
@@ -216,8 +242,8 @@ class Statistic:
                         area1=float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
                         area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
 
-                        # overlap=blockArea/(area1+area2+blockArea)
-                        overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
+                        overlap=blockArea/(area1+area2+blockArea)
+                        #overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
 
                         if overlap >threshold:
                             flag2=True
