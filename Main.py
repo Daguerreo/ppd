@@ -17,13 +17,13 @@ REALTIME = True
 pathFrame = 'video%04d.jpg'
 pathTraining = "dataset/"
 pathSave = "save/"
-sequence = "C:/Users/Chiara/Desktop/MuMet/progetto/Set_3/"
+sequence = "sequences/"
 groundtruth = "groundtruth/"
 pathTest = "rects/"
 
 # pathFolder = "Set_3/ID_89/Camera_1/Seq_1/"
-# pathFolder = "Set_4/ID_122/Camera_8/Seq_3/"
-pathFolder = "Set_4/ID_139/Camera_8/Seq_1/"
+pathFolder = "Set_4/ID_112/Camera_8/Seq_1/"
+# pathFolder = "Set_4/ID_139/Camera_8/Seq_1/"
 pathSequence = sequence + pathFolder
 pathGT = groundtruth + pathFolder
 pathComplete = pathSequence + pathFrame
@@ -56,7 +56,7 @@ mask_threshold = 0.3
 minOverlap_x = 2*step
 minOverlap_y = 5*step
 
-scale = 1
+scale = 1.0
 frameScale = 0.7
 
 def main():
@@ -69,8 +69,8 @@ def main():
     average = np.float32(firstframe)
     cv2.accumulateWeighted(firstframe, average, 0.2)
     logger.timerStart()
-    train(mysvm, pathTraining,True,False,False,True,False,True)
-    # train(mysvm, pathTraining)
+    # train(mysvm, pathTraining,True,False,False,True,False,True)
+    train(mysvm, pathTraining)
 
     while cap.isOpened():
         success, framergb = cap.read()
@@ -117,7 +117,7 @@ def main():
                 break
 
 
-    TP, TN, FP, FN = stat.calcPositiveNegative(pathGT,pathTest,24)
+    TP, TN, FP, FN = stat.calcPositiveNegative(pathGT,pathTest,frameScale,24)
     print "TP = "+str(TP)+", TN = "+str(TN)+", FP = "+str(FP)+", FN = "+str(FN)
     accuracy,recall,precision,f1score=stat.calcPerformance(TP,TN,FP,FN)
     print "Accuracy = "+str(accuracy)
@@ -246,5 +246,5 @@ def set_global_var(realtime, verbose):
     return
 
 main()
-while True:
-    print "Vercellino will kill you!!!!!"
+# while True:
+#     print "Vercellino will kill you!!!!!"

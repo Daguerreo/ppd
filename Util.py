@@ -76,6 +76,7 @@ class Util:
         fgmask = cv2.medianBlur(fgmask, 9)
 
         return fgmask
+
     def delFolderContent(self,path):
         for the_file in os.listdir(path):
             file_path = os.path.join(path, the_file)
