@@ -9,5 +9,6 @@ Set-ID-Cam-Seq
 4-114-8-1          	label
 4-115-8-1	       label
 4-121-8-1		label
+4-122-8-1		label
 4-129-8-1          	label
 4-139-8-1	       label
