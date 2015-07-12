@@ -22,7 +22,7 @@ groundtruth = "groundtruth/"
 pathTest = "rects/"
 
 # pathFolder = "Set_3/ID_89/Camera_1/Seq_1/"
-pathFolder = "Set_4/ID_112/Camera_8/Seq_1/"
+pathFolder = "Set_4/ID_121/Camera_8/Seq_1/"
 # pathFolder = "Set_4/ID_139/Camera_8/Seq_1/"
 pathSequence = sequence + pathFolder
 pathGT = groundtruth + pathFolder
@@ -46,8 +46,8 @@ roimaskbuf = []
 maskbuf = []
 bgbuf = []
 
-#cancella il contenuto di rects prima di iniziare
-util.delFolderContent('rects/')
+# cancella il contenuto di rects prima di iniziare
+util.delFolderContent(pathTest)
 
 step = 15
 orient = 8
@@ -55,7 +55,6 @@ matching_threshold = 0.9
 mask_threshold = 0.3
 minOverlap_x = 2*step
 minOverlap_y = 5*step
-
 scale = 1.0
 frameScale = 0.7
 
@@ -227,7 +226,7 @@ def calcHog(framergb, frame, mask, nameFrame):
 
     myhog.draw_detections(framergb, definitiveList, defproba, matching_threshold, 2)
 
-    file = open('rects/'+os.path.basename(nameFrame)+'.gt','w')
+    file = open(pathTest+os.path.basename(nameFrame)+'.gt','w')
     for f in definitiveList:
        file.write(str(f[0]) + ' ' + str(f[1]) + ' ' + str(f[2]) + ' ' + str(f[3]) + '\n')
     file.close()
@@ -238,13 +237,42 @@ def calcHog(framergb, frame, mask, nameFrame):
     return totalRect, len(definitiveList)
 ########################################################################################
 # program start here
-def set_global_var(realtime, verbose):
+def global_var(realtime, verbose):
     global REALTIME
     global VERBOSE
+
     REALTIME = realtime
     VERBOSE = verbose
     return
 
+def hog_parameters(st=12, orien=8, mt=0.9, sc=1.0, fs=0.7, mx=2, my=5):
+    global step
+    global orient
+    global matching_threshold
+    global scale
+    global frameScale
+    global minOverlap_x
+    global minOverlap_y
+    # di quanto si muove la finestra di scorrimento
+    step = st
+    # orientazione dei gradienti
+    orient = orien
+    # soglia di match tra le finestre
+    matching_threshold = mt
+    # scala della finetra di ritaglio
+    scale = sc
+    # scala del frame del video
+    frameScale = fs
+    # considera le intersezioni tra i rettangoli trovati vicini
+    minOverlap_x = mx*step
+    minOverlap_y = my*step
+
+    return
+
+def mask_param():
+    # soglia da maschera da computare o meno
+    mask_threshold = 0.3
+
+    return
+
 main()
-# while True:
-#     print "Vercellino will kill you!!!!!"
