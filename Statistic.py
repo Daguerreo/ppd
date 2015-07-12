@@ -75,10 +75,10 @@ class Statistic:
 
                         # percentuale di intersezione
                         # overlap=blockArea/(area1+area2+blockArea)
-                        overlap = math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
-                        overlap=np.sqrt((rectGT[0]-rectGT[1])**2+(rectTest[0]-rectTest[1])**2)
+                        #overlap = math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
+                        overlap=np.sqrt((rectGT[0]-rectTest[0])**2+(rectGT[1]-rectTest[1])**2)
                         # se c'e' abbastanza intersezione vuol dire che i due rect corrispondono
-                        if overlap > threshold:
+                        if overlap < threshold:
                             flag1=True
 
                     if flag1 is False:
@@ -115,8 +115,8 @@ class Statistic:
 
                         #overlap=blockArea/(area1+area2+blockArea)
                         #overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
-                        overlap=np.sqrt((rectGT[0]-rectGT[1])**2+(rectTest[0]-rectTest[1])**2)
-                        if overlap > threshold:
+                        overlap=np.sqrt((rectGT[0]-rectTest[0])**2+(rectGT[1]-rectTest[1])**2)
+                        if overlap < threshold:
                             flag2=True
 
                     if flag2 is False:
