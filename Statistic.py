@@ -10,7 +10,7 @@ class Statistic:
     def __init__(self):
         pass
 
-    def calcPositiveNegative(self, pathGT, path,threshold):
+    def calcPositiveNegative(self, pathGT, path,windowscale,threshold):
         dm=DatasetManager.DatasetManager()
 
         TP=0
@@ -43,7 +43,7 @@ class Statistic:
                 for s in fGT:
                     sl = s.split(' ')
                     #rectGT = (int(sl[0]), int(sl[1]), int(sl[2]), int(sl[3]))
-                    rectGT = (int(sl[0])*0.8, int(sl[1])*0.8, int(sl[2])*0.8, int(sl[3])*0.8)
+                    rectGT = (int(sl[0])*windowscale, int(sl[1])*windowscale, int(sl[2])*windowscale, int(sl[3])*windowscale)
                     for c in fTest:
                         cl = c.split(' ')
                         rectTest = (int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
@@ -132,7 +132,7 @@ class Statistic:
 
         return accuracy,recall,precision,f1score
 
-    def calcAccuracy_per_i_posteri(self,pathGT,path,threshold):
+    def calcAccuracy_per_i_posteri(self,pathGT,path,windowscale,threshold):
         dm=DatasetManager.DatasetManager()
 
         TP=0
@@ -163,7 +163,7 @@ class Statistic:
                 # per ogni riga di fileGT confronta con tutte le righe di fileTest
                 for s in fGT:
                     sl=s.split(' ')
-                    rectGT=(int(sl[0])*0.8,int(sl[1])*0.8,int(sl[2])*0.8,int(sl[3])*0.8)
+                    rectGT=(int(sl[0])*windowscale,int(sl[1])*windowscale,int(sl[2])*windowscale,int(sl[3])*windowscale)
                     #rectGT=(int(sl[0]),int(sl[1]),int(sl[2]),int(sl[3]))
                     for c in fTest:
                         cl=c.split(' ')
