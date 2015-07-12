@@ -1,4 +1,4 @@
-__author__ = 'Chiara'
+__author__ = 'Roberta'
 
 import os
 import DatasetManager
@@ -83,7 +83,7 @@ class Statistic:
                     rectTest=(int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
                     for s in fGT:
                         sl=s.split(' ')
-                        rectGT=(int(sl[0]),int(sl[1]),int(sl[2]),int(sl[3]))
+                        rectGT=(int(sl[0])*windowscale,int(sl[1])*windowscale,int(sl[2])*windowscale,int(sl[3])*windowscale)
 
                         x3=max(rectGT[0],rectTest[0])
                         y3=max(rectGT[1],rectTest[1])
@@ -204,7 +204,7 @@ class Statistic:
                     rectTest=(int(cl[0]),int(cl[1]),int(cl[2]),int(cl[3]))
                     for s in fGT:
                         sl=s.split(' ')
-                        rectGT=(int(sl[0]),int(sl[1]),int(sl[2]),int(sl[3]))
+                        rectGT=(int(sl[0])*windowscale,int(sl[1])*windowscale,int(sl[2])*windowscale,int(sl[3])*windowscale)
 
                         x3=max(rectGT[0],rectTest[0])
                         y3=max(rectGT[1],rectTest[1])
