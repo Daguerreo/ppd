@@ -150,7 +150,7 @@ class Statistic:
 
         return accuracy,recall,precision,f1score
 
-    def calcAccuracy_per_i_posteri(self,pathGT,path,windowscale,threshold):
+    def calcStatisticsValues(self,pathGT,path,windowscale,threshold):
         dm=DatasetManager.DatasetManager()
 
         TP=0
@@ -202,11 +202,13 @@ class Statistic:
                         blockArea=float(np.abs(x3-x4)*np.abs(y3-y4))
                         area1=float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
                         area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
-
+                        print "blockArea: "+str(blockArea)
+                        print "area1: "+str(area1)
+                        print "area2: "+str(area2)
                         # percentuale di intersezione
-                        overlap=blockArea/(area1+area2+blockArea)
+                        overlap=blockArea/(area1+area2-blockArea)
                         #overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
-
+                        print "overlap: "+str(overlap)
                         # se c'e' abbastanza intersezione vuol dire che i due rect corrispondono
                         if overlap > threshold:
                             flag1=True
@@ -242,7 +244,7 @@ class Statistic:
                         area1=float(np.abs(rectGT[2]-rectGT[0])*np.abs(rectGT[3]-rectGT[1]))
                         area2=float(np.abs(rectTest[2]-rectTest[0])*np.abs(rectTest[3]-rectTest[1]))
 
-                        overlap=blockArea/(area1+area2+blockArea)
+                        overlap=blockArea/(area1+area2-blockArea)
                         #overlap=math.hypot(rectGT[0]-rectTest[0],rectGT[1]-rectTest[1])
 
                         if overlap >threshold:
