@@ -26,10 +26,10 @@ class Logger:
         delta = now - self.startTime
         return int(delta.total_seconds()*1000)
 
-    def save(self, set, filename):
+    def save(self, data, filename):
         with open(filename, 'wb') as file:
         # pickle.dump([obj0, obj1, obj2], f)
-            pickle.dump(set, file, -1)
+            pickle.dump(data, file, -1)
         return
 
     def load(self, filename):

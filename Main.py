@@ -7,12 +7,14 @@ import Util
 import Hog
 import Logger
 import os
+import Statistic
+import datetime
 from sklearn import svm
-import Statistic#
 from sklearn.ensemble import RandomForestClassifier
 
 VERBOSE = True
 REALTIME = True
+BATCH = False
 
 pathFrame = 'video%04d.jpg'
 pathTraining = "dataset/"
@@ -21,12 +23,11 @@ sequence = "sequences/"
 groundtruth = "groundtruth/"
 pathTest = "rects/"
 
-# pathFolder = "Set_3/ID_89/Camera_1/Seq_1/"
-pathFolder = "Set_4/ID_121/Camera_8/Seq_1/"
+pathFolder = "Set_3/ID_76/Camera_1/Seq_1/"
+# pathFolder = "Set_4/ID_138/Camera_8/Seq_1/"
 # pathFolder = "Set_4/ID_139/Camera_8/Seq_1/"
-pathSequence = sequence + pathFolder
+
 pathGT = groundtruth + pathFolder
-pathComplete = pathSequence + pathFrame
 
 labelName = pathSave + "label.pickle"
 trainListName = pathSave + "trainList.pickle"
@@ -49,16 +50,20 @@ bgbuf = []
 # cancella il contenuto di rects prima di iniziare
 util.delFolderContent(pathTest)
 
-step = 15
+step = 12
 orient = 8
 matching_threshold = 0.9
 mask_threshold = 0.3
+overlap_threshold = 0.5
+edge_distance_threshold = 24
 minOverlap_x = 2*step
 minOverlap_y = 5*step
 scale = 1.0
 frameScale = 0.7
 
-def main():
+def main(pathfolder):
+    pathSequence = sequence + pathfolder
+    pathComplete = pathSequence + pathFrame
     personsFound = 0
     index_frame = 1
     cap = cv2.VideoCapture(pathComplete)
@@ -87,7 +92,7 @@ def main():
         # maskMog = util.getMaskMog(framergb)
         mask += maskgray
 
-        if REALTIME is False:
+        if REALTIME is False and BATCH is False:
             maskbuf.append(mask)
 
         frame = cv2.blur(frame,(5,5))
@@ -95,7 +100,7 @@ def main():
         personsFound += p
         index_frame += 1
 
-        if REALTIME is True:
+        if REALTIME is True and BATCH is False:
             cv2.imshow('original', framergb)
             cv2.imshow('mask', mask)
             # cv2.imshow('mog', maskMog)
@@ -103,11 +108,11 @@ def main():
             c = cv2.waitKey(1)
             if c == ord(' '):
                 break
-
-    print 'Total Time: ' + str(logger.totalTime())
+    time = logger.totalTime()
+    print 'Total Time: ' + str(time)
     print 'Rect Founds: ' + str(personsFound)
 
-    if REALTIME is False:
+    if REALTIME is False and BATCH is False:
         for i in range(0,len(framebuf)):
             cv2.imshow('original', framebuf[i])
             cv2.imshow('mask', maskbuf[i])
@@ -116,7 +121,12 @@ def main():
                 break
 
 
-    TP, TN, FP, FN = stat.calcPositiveNegative(pathGT,pathTest,frameScale,24)
+    # TP, TN, FP, FN = stat.calcPositiveNegative(pathGT,pathTest,frameScale,24)
+    # calcola la distanza dagli spigoli
+    TP, TN, FP, FN = stat.calcPositiveNegative(pathGT,pathTest,frameScale,edge_distance_threshold)
+    # calcola l'area di overlap tra i parametri
+    # TP, TN, FP, FN = stat.calcStatisticsValues(pathGT,pathTest,frameScale,overlap_threshold)
+    print datetime.datetime.now()
     print "TP = "+str(TP)+", TN = "+str(TN)+", FP = "+str(FP)+", FN = "+str(FN)
     accuracy,recall,precision,f1score=stat.calcPerformance(TP,TN,FP,FN)
     print "Accuracy = "+str(accuracy)
@@ -124,7 +134,7 @@ def main():
     print "Precision = "+str(precision)
     print "F1 Score = "+str(f1score)
 
-    return
+    return accuracy, recall, precision, f1score, time
 
 def train(svm, trainingPath, loadlbl=True, savelbl=False, loadtrain=True, savetrain=False, loadsvm=True, savesm=False):
     pix_x_cell = (16, 16)
@@ -237,15 +247,17 @@ def calcHog(framergb, frame, mask, nameFrame):
     return totalRect, len(definitiveList)
 ########################################################################################
 # program start here
-def global_var(realtime, verbose):
+def global_var(realtime, verbose, batch):
     global REALTIME
     global VERBOSE
+    global BATCH
 
     REALTIME = realtime
     VERBOSE = verbose
+    BATCH = batch
     return
 
-def hog_parameters(st=12, orien=8, mt=0.9, sc=1.0, fs=0.7, mx=2, my=5):
+def hog_parameters(st=12, mt=0.9, sc=1.0):
     global step
     global orient
     global matching_threshold
@@ -255,17 +267,10 @@ def hog_parameters(st=12, orien=8, mt=0.9, sc=1.0, fs=0.7, mx=2, my=5):
     global minOverlap_y
     # di quanto si muove la finestra di scorrimento
     step = st
-    # orientazione dei gradienti
-    orient = orien
     # soglia di match tra le finestre
     matching_threshold = mt
     # scala della finetra di ritaglio
     scale = sc
-    # scala del frame del video
-    frameScale = fs
-    # considera le intersezioni tra i rettangoli trovati vicini
-    minOverlap_x = mx*step
-    minOverlap_y = my*step
 
     return
 
@@ -275,4 +280,62 @@ def mask_param():
 
     return
 
-main()
+seqList = {
+    "Set_3/ID_76/Camera_1/Seq_1/",
+    "Set_3/ID_80/Camera_1/Seq_1/",
+    "Set_4/ID_112/Camera_8/Seq_1/",
+    "Set_4/ID_114/Camera_8/Seq_1/",
+    "Set_4/ID_115/Camera_8/Seq_1/",
+    "Set_4/ID_121/Camera_8/Seq_1/",
+    "Set_4/ID_122/Camera_8/Seq_1/",
+    "Set_4/ID_122/Camera_8/Seq_3/",
+    "Set_4/ID_123/Camera_8/Seq_1/",
+    "Set_4/ID_129/Camera_8/Seq_1/",
+    "Set_4/ID_139/Camera_8/Seq_1/"
+}
+
+def batch():
+    stepList = [11, 13, 15]
+    mtList = [0.9, 0.95, 0.99]
+    scalList = [0.9, 1.0, 1.1]
+
+    print "batch start"
+    for s in stepList:
+        for m in mtList:
+            for c in scalList:
+                accList= []
+                recList = []
+                precList = []
+                f1List = []
+                timeList = []
+                out = ""
+                filename = pathSave + "log-s" + str(s) + "-m" + str(m) + "-c" + str(c) + ".txt"
+                print "start " + str(s) + " " + str(m) + " " + str(c)
+                for l in seqList:
+                    hog_parameters(s, m, c)
+                    accuracy, recall, precision, f1score, time = main(l)
+                    out += "Set " + str(l) + "\n"
+                    out += "Accuracy = "+str(accuracy) + " "
+                    out += "Recall = "+str(recall) + " "
+                    out += "Precision = "+str(precision) + " "
+                    out += "F1 Score = "+str(f1score) + " "
+                    out += "Total Time = " + str(time)
+                    out += "\n"
+                    accList.append(accuracy)
+                    recList.append(recall)
+                    precList.append(precision)
+                    f1List.append(f1score)
+                    timeList.append(time)
+
+                out += "Mean Avg Accuracy: " + str(np.mean(accList)) + "\n"
+                out += "Mean Avg Recall: " + str(np.mean(recList)) + "\n"
+                out += "Mean Avg Precision: " + str(np.mean(precList)) + "\n"
+                out += "Mean Avg F1: " + str(np.mean(f1List)) + "\n"
+                out += "Mean Elapsed Time:" + str(np.mean(timeList)) + "\n"
+                with open(filename, "w") as f:
+                    f.write(out)
+
+    print "team bottle wins"
+    return
+
+main(pathFolder)
