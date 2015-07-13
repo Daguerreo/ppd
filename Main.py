@@ -13,8 +13,8 @@ from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 
 VERBOSE = True
-REALTIME = False
-BATCH = True
+REALTIME = True
+BATCH = False
 
 pathFrame = 'video%04d.jpg'
 pathTraining = "dataset/"
@@ -23,8 +23,8 @@ sequence = "sequences/"
 groundtruth = "groundtruth/"
 pathTest = "rects/"
 
-# pathFolder = "Set_3/ID_76/Camera_1/Seq_1/"
-pathFolder = "Set_4/ID_134/Camera_8/Seq_1/"
+pathFolder = "Set_3/ID_80/Camera_1/Seq_1/"
+# pathFolder = "Set_4/ID_134/Camera_8/Seq_1/"
 
 labelName = pathSave + "label.pickle"
 trainListName = pathSave + "trainList.pickle"
@@ -72,7 +72,7 @@ def main(pathfolder):
     average = np.float32(firstframe)
     cv2.accumulateWeighted(firstframe, average, 0.2)
     logger.timerStart()
-    # train(mysvm, pathTraining,True,False,False,True,False,True)
+    # train(mysvm, pathTraining,False,True,False,True,False,True)
     train(mysvm, pathTraining)
 
     while cap.isOpened():
@@ -281,14 +281,14 @@ def mask_param():
     return
 
 seqList = {
-    "Set_3/ID_76/Camera_1/Seq_1/",
+    # "Set_3/ID_76/Camera_1/Seq_1/",
     "Set_3/ID_80/Camera_1/Seq_1/",
     "Set_4/ID_112/Camera_8/Seq_1/",
     "Set_4/ID_114/Camera_8/Seq_1/",
     "Set_4/ID_115/Camera_8/Seq_1/",
     "Set_4/ID_121/Camera_8/Seq_1/",
     "Set_4/ID_122/Camera_8/Seq_1/",
-    "Set_4/ID_122/Camera_8/Seq_3/",
+    # "Set_4/ID_122/Camera_8/Seq_3/",
     "Set_4/ID_123/Camera_8/Seq_1/",
     "Set_4/ID_129/Camera_8/Seq_1/",
     "Set_4/ID_138/Camera_8/Seq_1/",
@@ -296,11 +296,11 @@ seqList = {
 }
 
 def batch():
-    stepList = [9, 11, 13, 15, 17]
-    mtList = [0.85, 0.9, 0.95, 0.99]
-    scalList = [0.8, 0.9, 1.0, 1.1, 1.2]
-    edgedistList = [16, 20, 24, 28, 32]
-    maskList = [0.25, 0.3, 0.35, 0.4, 0.45, 0.50]
+    stepList = [14, 11]
+    mtList = [0.85, 0.9, 0.95]
+    scalList = [0.8, 1.0, 1.2]
+    edgedistList = [20, 24, 28]
+    maskList = [0.25, 0.3, 0.35, 0.4]
 
     print "batch start"
     for s in stepList:
@@ -317,7 +317,7 @@ def batch():
                         filename += "-edge" + str(e) + "-maskt" + str(k) + ".txt"
                         print "start " + filename
                         out = "scale" + str(s) + "-match" + str(m) + "-scale" + str(c) + "-edge" + str(e) + "-maskt" + str(k) + "\n"
-                        out += str(s) + "," + str(m) + " ," + str(c) + "," + str(e) + "," + str(k) + "\n"
+                        out += str(s) + "," + str(m) + "," + str(c) + "," + str(e) + "," + str(k) + "\n"
                         out += "Set,Accuracy,Recall,Precision,F1Score,TotalTime\n"
                         for l in seqList:
                             print "Sequence " + str(l)
@@ -337,16 +337,18 @@ def batch():
                             timeList.append(time)
 
                         out += "Mean Avg Accuracy,Mean Avg Recall,Mean Avg Precision,Mean Avg F1,Mean Elapsed Time\n"
-                        out += str(np.mean(accList)) + "\n"
-                        out += str(np.mean(recList)) + "\n"
-                        out += str(np.mean(precList)) + "\n"
-                        out += str(np.mean(f1List)) + "\n"
-                        out += str(np.mean(timeList)) + "\n"
+                        out += str(np.mean(accList)) + ","
+                        out += str(np.mean(recList)) + ","
+                        out += str(np.mean(precList)) + ","
+                        out += str(np.mean(f1List)) + ","
+                        out += str(np.mean(timeList))
                         with open(filename, "w") as f:
                             f.write(out)
 
     print "team bottle wins"
     return
 
-batch()
-# main(pathFolder)
+if BATCH is True:
+    batch()
+else:
+    main(pathFolder)

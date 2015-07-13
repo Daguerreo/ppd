@@ -31,7 +31,6 @@ class DatasetManager:
                 filename = os.path.basename(s)
                 str = os.path.splitext(filename)[1]
                 if os.path.splitext(filename)[1] == '.jpg' or os.path.splitext(filename)[1] == '.bmp':
-
                     name_fig.append(os.path.join(path,categories[c],s))
                     label.append(c)
 
