@@ -39,26 +39,26 @@ for i in os.listdir(path):
 statList = sorted(statList, key=getPre, reverse=True)
 labelList = []
 
-for i in range(0,5):
-    print statList[i].name + " Precision: " + statList[i].precision
+for i in range(0,10):
+    print statList[i].name + " Precision: " + statList[i].precision + " Time " + statList[i].totalTime
     labelList.append(statList[i].name)
 
 statList = sorted(statList, key=getAcc, reverse=True)
-
-for i in range(0,5):
-    print statList[i].name + " Accuracy: " + statList[i].accuracy
+print ""
+for i in range(0,10):
+    print statList[i].name + " Accuracy: " + statList[i].accuracy + " Time " + statList[i].totalTime
     labelList.append(statList[i].name)
 
 statList = sorted(statList, key=getRec, reverse=True)
-
-for i in range(0,5):
-    print statList[i].name + " Recall: " + statList[i].recall
+print ""
+for i in range(0,10):
+    print statList[i].name + " Recall: " + statList[i].recall + " Time " + statList[i].totalTime
     labelList.append(statList[i].name)
 
 statList = sorted(statList, key=getF1, reverse=True)
-
-for i in range(0,5):
-    print statList[i].name + " F1 Score: " + statList[i].f1Score
+print ""
+for i in range(0,10):
+    print statList[i].name + " F1 Score: " + statList[i].f1Score + " Time " + statList[i].totalTime
     labelList.append(statList[i].name)
-
+print ""
 print Counter(labelList)
