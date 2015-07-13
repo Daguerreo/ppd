@@ -14,7 +14,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 VERBOSE = True
 REALTIME = True
-BATCH = False
+BATCH = True
 
 pathFrame = 'video%04d.jpg'
 pathTraining = "dataset/"
@@ -296,7 +296,7 @@ seqList = {
 }
 
 def batch():
-    stepList = [14, 11]
+    stepList = [14]
     mtList = [0.85, 0.9, 0.95]
     scalList = [0.8, 1.0, 1.2]
     edgedistList = [20, 24, 28]
