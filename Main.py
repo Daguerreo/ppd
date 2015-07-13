@@ -13,8 +13,8 @@ from sklearn import svm
 from sklearn.ensemble import RandomForestClassifier
 
 VERBOSE = True
-REALTIME = True
-BATCH = False
+REALTIME = False
+BATCH = True
 
 pathFrame = 'video%04d.jpg'
 pathTraining = "dataset/"
@@ -23,11 +23,8 @@ sequence = "sequences/"
 groundtruth = "groundtruth/"
 pathTest = "rects/"
 
-pathFolder = "Set_3/ID_76/Camera_1/Seq_1/"
-# pathFolder = "Set_4/ID_138/Camera_8/Seq_1/"
-# pathFolder = "Set_4/ID_139/Camera_8/Seq_1/"
-
-pathGT = groundtruth + pathFolder
+# pathFolder = "Set_3/ID_76/Camera_1/Seq_1/"
+pathFolder = "Set_4/ID_134/Camera_8/Seq_1/"
 
 labelName = pathSave + "label.pickle"
 trainListName = pathSave + "trainList.pickle"
@@ -54,16 +51,18 @@ step = 12
 orient = 8
 matching_threshold = 0.9
 mask_threshold = 0.3
-overlap_threshold = 0.5
 edge_distance_threshold = 24
 minOverlap_x = 2*step
 minOverlap_y = 5*step
 scale = 1.0
 frameScale = 0.7
+# solo se viene usato il metodo di overlap
+overlap_threshold = 0.5
 
 def main(pathfolder):
     pathSequence = sequence + pathfolder
     pathComplete = pathSequence + pathFrame
+    pathGT = groundtruth + pathfolder
     personsFound = 0
     index_frame = 1
     cap = cv2.VideoCapture(pathComplete)
@@ -257,20 +256,21 @@ def global_var(realtime, verbose, batch):
     BATCH = batch
     return
 
-def hog_parameters(st=12, mt=0.9, sc=1.0):
+def hog_parameters(st=12, mtc=0.9, sc=1.0, dis=24, msk=0.3 ):
     global step
     global orient
     global matching_threshold
     global scale
-    global frameScale
-    global minOverlap_x
-    global minOverlap_y
+    global edge_distance_threshold
+    global mask_threshold
     # di quanto si muove la finestra di scorrimento
     step = st
     # soglia di match tra le finestre
-    matching_threshold = mt
+    matching_threshold = mtc
     # scala della finetra di ritaglio
     scale = sc
+    edge_distance_threshold = dis
+    mask_threshold = msk
 
     return
 
@@ -291,51 +291,62 @@ seqList = {
     "Set_4/ID_122/Camera_8/Seq_3/",
     "Set_4/ID_123/Camera_8/Seq_1/",
     "Set_4/ID_129/Camera_8/Seq_1/",
+    "Set_4/ID_138/Camera_8/Seq_1/",
     "Set_4/ID_139/Camera_8/Seq_1/"
 }
 
 def batch():
-    stepList = [11, 13, 15]
-    mtList = [0.9, 0.95, 0.99]
-    scalList = [0.9, 1.0, 1.1]
+    stepList = [9, 11, 13, 15, 17]
+    mtList = [0.85, 0.9, 0.95, 0.99]
+    scalList = [0.8, 0.9, 1.0, 1.1, 1.2]
+    edgedistList = [16, 20, 24, 28, 32]
+    maskList = [0.25, 0.3, 0.35, 0.4, 0.45, 0.50]
 
     print "batch start"
     for s in stepList:
         for m in mtList:
             for c in scalList:
-                accList= []
-                recList = []
-                precList = []
-                f1List = []
-                timeList = []
-                out = ""
-                filename = pathSave + "log-s" + str(s) + "-m" + str(m) + "-c" + str(c) + ".txt"
-                print "start " + str(s) + " " + str(m) + " " + str(c)
-                for l in seqList:
-                    hog_parameters(s, m, c)
-                    accuracy, recall, precision, f1score, time = main(l)
-                    out += "Set " + str(l) + "\n"
-                    out += "Accuracy = "+str(accuracy) + " "
-                    out += "Recall = "+str(recall) + " "
-                    out += "Precision = "+str(precision) + " "
-                    out += "F1 Score = "+str(f1score) + " "
-                    out += "Total Time = " + str(time)
-                    out += "\n"
-                    accList.append(accuracy)
-                    recList.append(recall)
-                    precList.append(precision)
-                    f1List.append(f1score)
-                    timeList.append(time)
+                for e in edgedistList:
+                    for k in maskList:
+                        accList= []
+                        recList = []
+                        precList = []
+                        f1List = []
+                        timeList = []
+                        filename = "log/" + "log-scale" + str(s) + "-match" + str(m) + "-scale" + str(c)
+                        filename += "-edge" + str(e) + "-maskt" + str(k) + ".txt"
+                        print "start " + filename
+                        out = "scale" + str(s) + "-match" + str(m) + "-scale" + str(c) + "-edge" + str(e) + "-maskt" + str(k) + "\n"
+                        out += str(s) + "," + str(m) + " ," + str(c) + "," + str(e) + "," + str(k) + "\n"
+                        out += "Set,Accuracy,Recall,Precision,F1Score,TotalTime\n"
+                        for l in seqList:
+                            print "Sequence " + str(l)
+                            hog_parameters(s, m, c, e, k)
+                            accuracy, recall, precision, f1score, time = main(l)
+                            out += str(l) + ","
+                            out += str(accuracy) + ","
+                            out += str(recall) + ","
+                            out += str(precision) + ","
+                            out += str(f1score) + ","
+                            out += str(time)
+                            out += "\n"
+                            accList.append(accuracy)
+                            recList.append(recall)
+                            precList.append(precision)
+                            f1List.append(f1score)
+                            timeList.append(time)
 
-                out += "Mean Avg Accuracy: " + str(np.mean(accList)) + "\n"
-                out += "Mean Avg Recall: " + str(np.mean(recList)) + "\n"
-                out += "Mean Avg Precision: " + str(np.mean(precList)) + "\n"
-                out += "Mean Avg F1: " + str(np.mean(f1List)) + "\n"
-                out += "Mean Elapsed Time:" + str(np.mean(timeList)) + "\n"
-                with open(filename, "w") as f:
-                    f.write(out)
+                        out += "Mean Avg Accuracy,Mean Avg Recall,Mean Avg Precision,Mean Avg F1,Mean Elapsed Time\n"
+                        out += str(np.mean(accList)) + "\n"
+                        out += str(np.mean(recList)) + "\n"
+                        out += str(np.mean(precList)) + "\n"
+                        out += str(np.mean(f1List)) + "\n"
+                        out += str(np.mean(timeList)) + "\n"
+                        with open(filename, "w") as f:
+                            f.write(out)
 
     print "team bottle wins"
     return
 
-main(pathFolder)
+batch()
+# main(pathFolder)
