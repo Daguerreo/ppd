@@ -313,7 +313,7 @@ def batch():
                         precList = []
                         f1List = []
                         timeList = []
-                        filename = "log/" + "log-scale" + str(s) + "-match" + str(m) + "-scale" + str(c)
+                        filename = "log/" + "log-step" + str(s) + "-match" + str(m) + "-scale" + str(c)
                         filename += "-edge" + str(e) + "-maskt" + str(k) + ".txt"
                         print "start " + filename
                         out = "scale" + str(s) + "-match" + str(m) + "-scale" + str(c) + "-edge" + str(e) + "-maskt" + str(k) + "\n"
