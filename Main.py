@@ -14,7 +14,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 VERBOSE = True
 REALTIME = True
-BATCH = True
+BATCH = False
 
 pathFrame = 'video%04d.jpg'
 pathTraining = "dataset/"
@@ -28,25 +28,17 @@ pathFolder = "Set_3/ID_80/Camera_1/Seq_1/"
 
 labelName = pathSave + "label.pickle"
 trainListName = pathSave + "trainList.pickle"
-clfName = pathSave + "svm.pickle"
+clfName = pathSave + "svmc001.pickle"
 
 util = Util.Util()
 logger = Logger.Logger()
 dm = DatasetManager.DatasetManager()
 stat=Statistic.Statistic()
 
-# mysvm = svm.SVC(kernel=intersectionKernel, C=10, probability=True)
-mysvm = svm.SVC(probability=True)
-# mysvm = RandomForestClassifier(n_estimators=100)
-myhog = Hog.Hog(mysvm)
-framebuf = []
-roimaskbuf = []
-maskbuf = []
-bgbuf = []
-
 # cancella il contenuto di rects prima di iniziare
 util.delFolderContent(pathTest)
 
+c_val = 1
 step = 12
 orient = 8
 matching_threshold = 0.9
@@ -59,7 +51,17 @@ frameScale = 0.7
 # solo se viene usato il metodo di overlap
 overlap_threshold = 0.5
 
+
+framebuf = []
+roimaskbuf = []
+maskbuf = []
+bgbuf = []
+
 def main(pathfolder):
+    # mysvm = svm.SVC(kernel=intersectionKernel, C=10, probability=True)
+    mysvm = svm.SVC(probability=True, C=c_val)
+    # mysvm = RandomForestClassifier(n_estimators=100)
+    myhog = Hog.Hog(mysvm)
     pathSequence = sequence + pathfolder
     pathComplete = pathSequence + pathFrame
     pathGT = groundtruth + pathfolder
@@ -72,8 +74,8 @@ def main(pathfolder):
     average = np.float32(firstframe)
     cv2.accumulateWeighted(firstframe, average, 0.2)
     logger.timerStart()
-    # train(mysvm, pathTraining,False,True,False,True,False,True)
-    train(mysvm, pathTraining)
+    train(mysvm, pathTraining,False,True,False,True,False,True)
+    # train(myhog, mysvm, pathTraining)
 
     while cap.isOpened():
         success, framergb = cap.read()
@@ -95,7 +97,7 @@ def main(pathfolder):
             maskbuf.append(mask)
 
         frame = cv2.blur(frame,(5,5))
-        totalRect, p = calcHog(framergb, frame, mask, namesFrameList[index_frame])
+        totalRect, p = calcHog(myhog, framergb, frame, mask, namesFrameList[index_frame])
         personsFound += p
         index_frame += 1
 
@@ -135,7 +137,7 @@ def main(pathfolder):
 
     return accuracy, recall, precision, f1score, time
 
-def train(svm, trainingPath, loadlbl=True, savelbl=False, loadtrain=True, savetrain=False, loadsvm=True, savesm=False):
+def train(myhog, svm, trainingPath, loadlbl=True, savelbl=False, loadtrain=True, savetrain=False, loadsvm=True, savesm=False):
     pix_x_cell = (16, 16)
     cell_x_block = (1, 1)
     hogTrainingList = []
@@ -186,7 +188,7 @@ def train(svm, trainingPath, loadlbl=True, savelbl=False, loadtrain=True, savetr
 
     return
 
-def calcHog(framergb, frame, mask, nameFrame):
+def calcHog(myhog, framergb, frame, mask, nameFrame):
     positionList = []
     probaList = []
     totalRect = 0
@@ -256,13 +258,14 @@ def global_var(realtime, verbose, batch):
     BATCH = batch
     return
 
-def hog_parameters(st=12, mtc=0.9, sc=1.0, dis=24, msk=0.3 ):
+def hog_parameters(st=12, mtc=0.9, sc=1.0, dis=24, msk=0.3, c=1.0 ):
     global step
     global orient
     global matching_threshold
     global scale
     global edge_distance_threshold
     global mask_threshold
+    global c_val
     # di quanto si muove la finestra di scorrimento
     step = st
     # soglia di match tra le finestre
@@ -271,12 +274,7 @@ def hog_parameters(st=12, mtc=0.9, sc=1.0, dis=24, msk=0.3 ):
     scale = sc
     edge_distance_threshold = dis
     mask_threshold = msk
-
-    return
-
-def mask_param():
-    # soglia da maschera da computare o meno
-    mask_threshold = 0.3
+    c_val = c
 
     return
 
@@ -295,12 +293,53 @@ seqList = {
     "Set_4/ID_139/Camera_8/Seq_1/"
 }
 
+def batchc():
+    clist = [0.01]
+
+    for c in clist:
+        accList= []
+        recList = []
+        precList = []
+        f1List = []
+        timeList = []
+        filename = str(c) + ".txt"
+        hog_parameters(11, 0.85, 0.8, 28, 0.4, c)
+        out = ""
+        print "start " + filename
+        for l in seqList:
+            print "Sequence " + str(l)
+            accuracy, recall, precision, f1score, time = main(l)
+            out = str(c) + "\n"
+            out += str(l) + ","
+            out += str(accuracy) + ","
+            out += str(recall) + ","
+            out += str(precision) + ","
+            out += str(f1score) + ","
+            out += str(time)
+            out += "\n"
+            accList.append(accuracy)
+            recList.append(recall)
+            precList.append(precision)
+            f1List.append(f1score)
+            timeList.append(time)
+
+        out += "Mean Avg Accuracy,Mean Avg Recall,Mean Avg Precision,Mean Avg F1,Mean Elapsed Time\n"
+        out += str(np.mean(accList)) + ","
+        out += str(np.mean(recList)) + ","
+        out += str(np.mean(precList)) + ","
+        out += str(np.mean(f1List)) + ","
+        out += str(np.mean(timeList))
+        with open(filename, "w") as f:
+            f.write(out)
+
+    return
+
 def batch():
     stepList = [14]
-    mtList = [0.85, 0.9, 0.95]
-    scalList = [0.8, 1.0, 1.2]
-    edgedistList = [20, 24, 28]
-    maskList = [0.25, 0.3, 0.35, 0.4]
+    mtList = [0.85]
+    scalList = [1.2]
+    edgedistList = [24, 28]
+    maskList = [0.4]
 
     print "batch start"
     for s in stepList:
