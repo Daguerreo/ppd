@@ -23,12 +23,16 @@ sequence = "sequences/"
 groundtruth = "groundtruth/"
 pathTest = "rects/"
 
-pathFolder = "Set_3/ID_80/Camera_1/Seq_1/"
-# pathFolder = "Set_4/ID_134/Camera_8/Seq_1/"
+# caos
+# pathFolder = "Set_4/ID_129/Camera_8/Seq_1/"
+# 1
+# pathFolder = "Set_4/ID_122/Camera_8/Seq_1/"
+pathFolder = "Set_4/ID_114/Camera_8/Seq_1/"
+# pathFolder = "Set_3/ID_76/Camera_1/Seq_1/"
 
 labelName = pathSave + "label.pickle"
 trainListName = pathSave + "trainList.pickle"
-clfName = pathSave + "svmc001.pickle"
+clfName = pathSave + "svmc10.pickle"
 
 util = Util.Util()
 logger = Logger.Logger()
@@ -38,15 +42,15 @@ stat=Statistic.Statistic()
 # cancella il contenuto di rects prima di iniziare
 util.delFolderContent(pathTest)
 
-c_val = 1
-step = 12
+c_val = 10
+step = 11
 orient = 8
-matching_threshold = 0.9
-mask_threshold = 0.3
-edge_distance_threshold = 24
+matching_threshold = 0.85
+mask_threshold = 0.4
+edge_distance_threshold = 28
 minOverlap_x = 2*step
 minOverlap_y = 5*step
-scale = 1.0
+scale = 0.8
 frameScale = 0.7
 # solo se viene usato il metodo di overlap
 overlap_threshold = 0.5
@@ -74,8 +78,8 @@ def main(pathfolder):
     average = np.float32(firstframe)
     cv2.accumulateWeighted(firstframe, average, 0.2)
     logger.timerStart()
-    train(mysvm, pathTraining,False,True,False,True,False,True)
-    # train(myhog, mysvm, pathTraining)
+    # train(myhog, mysvm, pathTraining,True,False,False,True,False,True)
+    train(myhog, mysvm, pathTraining)
 
     while cap.isOpened():
         success, framergb = cap.read()
@@ -294,7 +298,7 @@ seqList = {
 }
 
 def batchc():
-    clist = [0.01]
+    clist = [10]
 
     for c in clist:
         accList= []
@@ -335,10 +339,10 @@ def batchc():
     return
 
 def batch():
-    stepList = [14]
+    stepList = [11]
     mtList = [0.85]
-    scalList = [1.2]
-    edgedistList = [24, 28]
+    scalList = [0.8]
+    edgedistList = [28]
     maskList = [0.4]
 
     print "batch start"
@@ -388,6 +392,6 @@ def batch():
     return
 
 if BATCH is True:
-    batch()
+    batchc()
 else:
     main(pathFolder)
