@@ -1,7 +1,6 @@
 __author__ = 'Daguerreo'
 
-from datetime import tzinfo, timedelta, datetime
-from sklearn.externals import joblib
+from datetime import datetime
 import pickle
 
 class Logger:

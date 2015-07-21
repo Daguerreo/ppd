@@ -6,7 +6,11 @@ import os
 
 class Util:
     def __init__(self):
-        self.fgbg = cv2.BackgroundSubtractorMOG()
+        self.history = 50
+        # n frame per diventare sfondo, n of gaussian, soglia backgroun-foreground
+        self.fgbg = cv2.BackgroundSubtractorMOG(self.history,3,0.2)
+        # self.fgbg = cv2.BackgroundSubtractorMOG2(5,0.2,True)
+
         pass
 
     def getROI(self, img, edge, sizex, sizey):
@@ -68,10 +72,10 @@ class Util:
         return mask
 
     def getMaskMog(self, frame):
-        fgmask = self.fgbg.apply(frame)
-        element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(3,3))
+        fgmask = self.fgbg.apply(frame,learningRate=1.0/self.history)
+        element = cv2.getStructuringElement(cv2.MORPH_RECT,(5,5))
         fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_DILATE, element)
-        element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9))
+        element = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13))
         fgmask = cv2.morphologyEx(fgmask, cv2.MORPH_CLOSE, element)
         fgmask = cv2.medianBlur(fgmask, 9)
 

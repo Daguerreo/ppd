@@ -39,6 +39,7 @@ class Hog:
             return False, None
 
     def draw_detections(self, img, rects, probaList, threshold, thickness=1):
+        count = 0
         for i in range(len(rects)):
             x1 = rects[i][0]
             y1 = rects[i][1]
@@ -46,6 +47,9 @@ class Hog:
             y2 = rects[i][3]
             if probaList[i] > threshold:
                 cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), thickness)
+                count += 1
+
+        return count
 
     def calcHog(self, window, orientation=9, pixelxcell=(8, 8), cellsxblock=(3, 3)):
         hist = hog(window, orientation, pixelxcell, cellsxblock)

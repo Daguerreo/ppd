@@ -39,7 +39,7 @@ for i in os.listdir(path):
 statList = sorted(statList, key=getPre, reverse=True)
 labelList = []
 
-for i in range(0,10):
+for i in range(0,30):
     print statList[i].name + " Precision: " + statList[i].precision + " Time " + statList[i].totalTime
     labelList.append(statList[i].name)
 

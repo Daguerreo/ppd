@@ -1,9 +1,8 @@
 __author__ = 'User'
 
 import cv2
-import numpy as np
 import DatasetManager
-
+import Util
 
 def NegativeExamples(path,step,a,b,x,y,savepath):
 
@@ -24,10 +23,11 @@ def NegativeExamples(path,step,a,b,x,y,savepath):
 step = 10
 x=48
 y=128
-path = "sequences/Set_4/ID_134/Camera_8/"
+path = "sequences/Set_4/ID_129/Camera_8/"
 
-a = 3
-b = 7
+a = 10
+b = 20
 
-
+util = Util.Util()
+util.delFolderContent(path)
 NegativeExamples(path,step,a,b,x,y,"cut/")
