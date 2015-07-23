@@ -1,4 +1,4 @@
-\documentclass[a4paper, 11pt, onecolumn]{article} %mettere 		                                    twoside se stampo fronte retro!!!
+\documentclass[a4paper, 10pt, onecolumn]{article} %mettere 		                                    twoside se stampo fronte retro!!!
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[latin1]{inputenc}
@@ -95,6 +95,8 @@ The first graph (Figure \ref{fig:step}) shows how the method performs worse by i
 \label{fig:step}
 \end{figure}
 
+The following charts (Figure \ref{fig:cvalue}) show the consequences of the variation of the C-value with single-scale of the sliding window (a) and multiscale (b).  It is clear how the general performance of the algorithm, given by the F1-Score that is the harmonic mean of precision and recall, does not change significantly from the first to the second case; on the contrary there is a slightly larger difference in terms of precision and recall (see Table \ref{tab:res}). In fact with multiscale the recall increases because, by looking for people of ``different sizes'', the algorithm has more possibilities of detecting a person; however on the other side, because of the low robustness of HOG descriptors,  the precision decreases: in our case this is not due to the increasing of the number of false positives but to an incorrect positioning of the detection window. 
+
 \begin{figure}[h!]
 \centering
 \subfigure[]{\includegraphics[width=0.7\textwidth]{c_variation.png} }\\
@@ -109,28 +111,21 @@ The first graph (Figure \ref{fig:step}) shows how the method performs worse by i
 \begin{tabular}{c||c|c}
 &\textbf{Best fixed scale (=0.8)} & \textbf{Multiscale}\\
 \hline \hline 
-\textbf{Accuracy} & & \\
-\textbf{Recall} & & \\
-\textbf{Precision} & & \\
-\textbf{F1-score} & & \\
+\textbf{Accuracy} &0.660 & 0.633\\
+\textbf{Recall} &0.714  & 0.872\\
+\textbf{Precision} & 0.775 & 0.690\\
+\textbf{F1-score} & 0.740& 0.755\\
 \end{tabular}
 \caption{Final results}
+\label{tab:res}
 \end{table}
 
 \section{Discussion}\label{discussion}
-alle hog piacciono le gambe
+In this report we implemented a people detection algorithm: in particular we proposed two variations, one based on fixed scale detection and the other on multiscale, that is an improvement to the first solution. Despite the better results, the greater computational cost of the multiscale does not let the algorithm run real-time like the single-scale does.
 
-real-time
+Concerning future modifications, we can think of enhancing the dataset, in particular by adding more negatives examples. Moreover, we can introduce some kind of parallel computing to have a better response and work in real-time even with multiscale.
 
-
-
-
-
-
-
-
-
-
+Another possibility could be to try with another kind of features vector, because the HOG descriptor is not robust in case of occlusions or object with high variations with respect to the background.
 
 
 \end{document}
