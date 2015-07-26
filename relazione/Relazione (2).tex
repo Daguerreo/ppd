@@ -18,19 +18,20 @@
 \maketitle
 
 \begin{abstract}
-In this report we present a possible implementation in Python of Histogram of Oriented Gradient for people detection. For training and classification we used a Support Vector Machine using a linear kernel. A sliding window checks through a binary mask if there is movement in that region of interest avoiding in this way useless detections. Regions with movement are thus processed from the SVM which decides if it contains a person or not.
+In this report we present a possible method for human detection in video. We implemented an algorithm in Python that uses Histograms of Oriented Gradient descriptors, associated with Support Vector Machine (SVM) classifier with linear kernel, for detecting people in scene. A sliding window checks through a binary mask if there is movement in that region of interest avoiding in this way unnecessary checks and wrong detections. The features extracted from those rectangular regions with movement are thus processed from the SVM which decides if it contains a person or not.
 We proceed then with calculating the performances both in the preliminary single-scale case and later in the multiscale one, added to get over some of the constraints. 
 %The method proposed works with a single scale, using the distance between the corners of the detection and the ground-truth. Later, a second approach has been used trying to get over the limits of the first method using a multiscale analysis with a region overlapping evaluation.
 \end{abstract}
 
 \section{Introduction}
-Detecting and tracking people is an important and widespread argument of research that in the last years has \emph{roused} a lot of interest thanks to its wide range of application. Our project aims to apply one of the techniques used in literature, based on Histogram of Oriented Gradients (HOG), to detect people in a scene. 
+Detecting human beings in a given scene represents one of the most important and challenging tasks in computer vision and is becoming a key technology for many areas.
+Our project aims to apply one of the techniques used in literature, based on Histogram of Oriented Gradients (HOG), to detect people in a scene. 
 
 The minimum target of our work is that each person must be found at least once in a set of frames: in this way our algorithm could be easily used, after some improvements, in a video-surveillance system.
 
 Our project has some constraints, due to the choices taken during the setup of the work, that make it suitable for specific contexts only: the detection is limited to moving pedestrians, i.e. our algorithm can find only people walking and not people standing still. Furthermore, to make the choice of parameters easier, we have decided to limit our range of action to fixed-camera videos and to use only one scale for the detection.
 
-Section \ref{dataset} describes the Data-sets chosen for the experiment both for the Training and for the Validation/Test of the model. Section \ref{algorithm} explains in details the algorithm we have implemented: both with respect to the theoretical side (such as HOG and SVM) and to the practical one, related to our additions to the standard algorithm. Section \ref{results} presents the numerical results obtained applying our algorithm to the data-set and finally in Section \ref{discussion} we discuss the results obtained and we propose some improvements to the method.
+Section \ref{dataset} describes the Data-sets chosen for the experiment both for the Training and for the Validation/Test of the model. Section \ref{algorithm} explains in details the additions we have implemented to the standard algorithm (HOG descriptor and SVM classifier). Section \ref{results} presents the numerical results obtained applying our algorithm to the data-set and finally in Section \ref{discussion} we discuss the results obtained and we propose some improvements to the method.
 
 
 \section{The Data-set}\label{dataset}
@@ -87,7 +88,7 @@ The results obtained from our detector and the variations due to the multiscale 
 \section{Experimental results}\label{results}
 The performance of the classification were evaluated by cross-comparison between ground-truth and people found by our system. To check the correctness of the prediction we used two different methods, the first based on a threshold on the distance between the corners of the two bounding boxes, and the second on the overlapping of the two areas. Information on the goodness of our predictions were obtained computing Accuracy rate, Recall, Precision and F1-score derived from the confusion matrix. In order to obtain the best performances these evaluation measures have been calculated changing the parameters of the model, in term of step of the sliding window, threshold of the mask and the C-value of the linear SVM (see Figures \ref{fig:step} and \ref{fig:cvalue}), for each video and then averaged them on the entire validation-set.
 
-The first graph (Figure \ref{fig:step}) shows how the method performs worse by increasing the step of the sliding window, because it increases the chance of missing a person. We choose not to decrease the step under 11 because the computational costs were too high compared with the gain in performance.  The matching threshold represents the probability we set as a threshold during the prediction in a specific ROI.
+The first graph (Figure \ref{fig:step}) shows how the method performs worse by increasing the step of the sliding window, because it increases the chance of missing a person. We choose not to decrease the window stride under 11 because the computational costs were too high compared with the gain in detection accuracy. The matching threshold represents the probability we set as a threshold during the prediction in a specific ROI.
 \begin{figure}[h!]
 \centering
 \includegraphics[height=4.5cm]{step_variation.png} 

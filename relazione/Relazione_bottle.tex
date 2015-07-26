@@ -33,16 +33,16 @@ The minimum target of our work is that each person must be found at least once i
 
 Our project has some constraints, due to the choices taken during the set-up of the work, that make it suitable for specific contexts only: the detection is limited to moving pedestrians, i.e. our algorithm can find only people walking and not people standing still. Furthermore, to make the choice of parameters easier, we have decided to limit our range of action to fixed-camera videos and to use only one scale for the detection.
 
-Section \ref{dataset} describes the Data-sets chosen for the experiment both for the Training and for the Validation/Test of the model. Section \ref{algorithm} explains in details the additions we have implemented to the standard algorithm (HOG descriptor and SVM classifier). Section \ref{results} presents the numerical results obtained applying our algorithm to the data-set and finally in Section \ref{discussion} we discuss the results obtained and we propose some improvements to the method.
+Section \ref{dataset} describes the Datasets chosen for the experiment both for the Training and for the Validation/Test of the model. Section \ref{algorithm} explains in details the additions we have implemented to the standard algorithm (HOG descriptor and SVM classifier). Section \ref{results} presents the numerical results obtained applying our algorithm to the dataset and finally in Section \ref{discussion} we discuss the results obtained and we propose some improvements to the method.
 
 
-\section{The Data-set}\label{dataset}
-The data-set used for the training is composed, for the positive example, of the \emph{ViPeR Data-set} and for the negative examples of a custom-made one (see Figures \ref{fig:dataset} a-e), where one can find background, objects and ``pieces'' of people. 
+\section{The Dataset}\label{dataset}
+The dataset used for the training is composed, for the positive example, of the \emph{ViPeR Dataset} and for the negative examples of a custom-made one (see Figures \ref{fig:dataset} a-e), where one can find background, objects and ``pieces'' of people. 
 The size of the images is 48x128 pixels which we treat as the base dimension for the window (Section \ref{algorithm}). In total we used more than 6000 images for the training.
 
-For the validation and the training we took a set of videos from \emph{3dPes} (for example Figure \ref{fig:dataset} f) of about 200 frames each on average where from 1 to 10 persons walk in the scene. One of the major obstacles of this data-set is the difficult light condition.
+For the validation and the training we took a set of videos from \emph{3dPes} (for example Figure \ref{fig:dataset} f) of about 200 frames each on average where from 1 to 10 persons walk in the scene. One of the major obstacles of this dataset is the difficult light condition.
 
-Data-set annotations have been done manually for the whole set, which leads sometimes to a little misalignment with the region detected: this affects the evaluation of the performance both in positive and in negative, thus we think that the total effect can be neglected.
+Dataset annotations have been done manually for the whole set, which leads sometimes to a little misalignment with the region detected: this affects the evaluation of the performance both in positive and in negative, thus we think that the total effect can be neglected.
 \\
 \begin{figure}[h!]
 \centering
@@ -84,11 +84,20 @@ This allows us to build a mask that highlights only the regions of the frame in 
 \label{fig:mask}
 \end{figure}
 
-Once the mask has been calculated we perform the ``sliding window'' on the frame in exam (Figure \ref{fig:mask}b): a fixed-scale (with respect to the base one) window scans the frame and try for detection only if the number of white pixels, in the same ROI of the mask, is over a given threshold. For these windows we extract the feature vectors (HOG descriptor\footnote{HOG parameters: 8 orientations bins, 16x16 pixels per cell, 1x1 cells per block}) and we send them to the SVM classifier to get a prediction of the class they belong to: Person or Non Person. We use a probabilistic approach for the matching, which also allows us to discard multiple detections around the same ROI: we choose only those predictions that have the probability higher of a fixed threshold. For what concerns the classifier, we choose to use the linear kernel instead of the intersection one because of the less computational cost. At this point it is still possible to have multiple detections for a single person: for this reason we perform \emph{Non Maxima Suppression} by keeping, in the neighbourhood  of a detected person, only the bounding box with the higher probability.
+Once the mask has been calculated we perform the ``sliding window'' on the frame in exam (Figure \ref{fig:mask}b): a fixed-scale (with respect to the base one) window scans the frame and try for detection only if the number of white pixels, in the same ROI of the mask, is over a given threshold. For these windows we extract the feature vectors (HOG descriptor \footnote{HOG parameters: 8 orientations bins, 16x16 pixels per cell, 1x1 cells per block}) and we send them to the SVM classifier to get a prediction of the class they belong to: Person or Non Person. We use a probabilistic approach for the matching, which also allows us to discard multiple detections around the same ROI: we choose only those predictions that have the probability higher of a fixed threshold. For what concerns the classifier, we choose to use the linear kernel instead of the intersection one because of the less computational cost. At this point it is still possible to have multiple detections for a single person: for this reason we perform \emph{Non Maxima Suppression} by keeping, in the neighbourhood  of a detected person, only the bounding box with the higher probability.
 
 Afterwards one improvement has been made to the algorithm and one of its most important limits has been overcome: we introduced the multiscale detection by cycling on the dimension of the sliding window. 
 
-The results obtained from our detector and the variations due to the multiscale will be presented in Section \ref{results}.
+The results obtained from our detector and the variations due to the multiscale will be presented in Section \ref{results}. Figure \ref{fig:algorithm detection} shows an example of how our algorithm works.
+\
+\begin{figure}[h!]
+\centering
+\subfigure[]{\includegraphics[height=10cm]{immagine1.JPG} }
+
+\caption{Example of detection in a scene with two people.}
+\label{fig:algorithm detection}
+\end{figure}
+\pagebreak
 
 
 
@@ -134,9 +143,9 @@ The second chart (Figure \ref{fig:cvalue}) show the consequences of the variatio
 
 \begin{figure}[h!]
 \centering
-\subfigure[]{\includegraphics[width=0.7\textwidth]{c_variation.png} }\\
-\subfigure[]{\includegraphics[width=0.7\textwidth]{c_variation_multi.png} }
-\caption{Performances as the C-value changes in the single-scale case (a) and in the multiscale case (b) with best parameters for each algorithm.}
+\subfigure[]{\includegraphics[width=0.6\textwidth]{CVariation_fixedscale.png} }\\
+\subfigure[]{\includegraphics[width=0.6\textwidth]{Cvariation_multiscale.png} }
+\caption{Performances as the C-value changes in the single-scale case (a) and in the multiscale case (b) with best parameters for each algorithm. Accuracy, Precision, Recall and F1-score represent the Mean Average value of each measure on the Validation Set.}
 \label{fig:cvalue}
 \end{figure}
 \
@@ -150,13 +159,14 @@ The second chart (Figure \ref{fig:cvalue}) show the consequences of the variatio
 \textbf{Precision} & 0.775 & 0.690\\
 \textbf{F1-score} & 0.740& 0.755\\
 \end{tabular}
-\caption{Final results with the best parameters of each algorithm: fixed scale = 0.8, step = 11 (for both algorithms), match threshold = 0.85 for single-scale and 0.9 for multiscale, mask threshold = 0.4 for single-scale and 0.35 for multiscale. }
+\caption{Final results with the best parameters of each algorithm: fixed scale = 0.8, step = 11 (for both algorithms), match threshold = 0.85 for single-scale and 0.9 for multiscale, mask threshold = 0.4 for single-scale and 0.35 for multiscale. Accuracy, Precision, Recall and F1-score represent the Mean Average value of each measure on the Validation Set. }
 \label{tab:res}
 \end{table}
+\pagebreak
 
 \section{Discussion}\label{discussion}
 In this report we implemented a people detection algorithm: in particular we proposed two variations, one based on fixed scale detection and the other on multiscale, that is an improvement to the first solution. Despite the better results, the greater computational cost of the multiscale does not let the algorithm run real-time like the single-scale does. 
-Interesting results are obtained using the multiscale in those videos where there is a grater number of people: with multiscale we can better manage the ``crowd'' achieving improvements in classification performances (see Table \ref{tab:performance compairson}).
+Interesting results are obtained using the multiscale in those videos where there is a grater number of people: with multiscale we can better manage the ``crowd'' achieving improvements in classification performances (see Table \ref{tab:performance comparison}).
 
 
 Concerning future modifications, we can think of enhancing the dataset, in particular by adding more negatives examples. Moreover, we can introduce some kind of parallel computing to have a better response and work in real-time even with multiscale. 
@@ -175,18 +185,9 @@ Other possible future developments of our algorithm could be done applying Princ
 \textbf{Precision} & 0.629 &  0.740\\
 \textbf{F1-score} & 0.647& 0.758\\
 \end{tabular}
-\caption{Performance comparison between Fixed-scale = 0.8 and multiscale in a video with more people}
+\caption{Performance comparison between Fixed-scale = 0.8 and multiscale in a video with more people.}
 \label{tab:performance compairson}
 \end{table}
-\
-Figure \ref{fig:algorithm detection} shows an example of how our algorithm works.
 
-\begin{figure}[h!]
-\centering
-\subfigure[]{\includegraphics[height=10cm]{immagine1.JPG} }
-
-\caption{Example of our algorithm detection.}
-\label{fig:algorithm detection}
-\end{figure}
 
 \end{document}
