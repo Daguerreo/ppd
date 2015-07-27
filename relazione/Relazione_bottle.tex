@@ -15,12 +15,13 @@
 
 \title{People Detection \\with Histogram of Oriented Gradients \\
 \large Project report}
+\date{July 24,  2015}
 \author{Chiara Bizzotto, Maurizio Ingrassia and Roberta Papa}
 
 \maketitle
 
 \begin{abstract}
-In this report we present a possible method for human detection in videos. We implemented an algorithm in Python that uses Histograms of Oriented Gradient descriptors, associated with Support Vector Machine (SVM) classifier with linear kernel, for detecting people in scene. A sliding window checks through a binary mask if there is movement in that region of interest avoiding in this way unnecessary checks and wrong detections. The features extracted from those rectangular regions with movement are thus processed from the SVM which decides if it contains a person or not.
+In this report we present a possible method for human detection in videos. We implemented an algorithm in Python that uses Histograms of Oriented Gradients descriptors, associated with Support Vector Machine (SVM) classifier with linear kernel, for detecting people in scene. A sliding window checks through a binary mask if there is movement in that region of interest avoiding in this way unnecessary checks and wrong detections. The features extracted from those rectangular regions with movement are thus processed from the SVM which decides if it contains a person or not.
 Finally we evaluated the efficiency of our method both in the preliminary single-scale case and in the multiscale one, added to get over some of the constraints.
 %The method proposed works with a single scale, using the distance between the corners of the detection and the ground-truth. Later, a second approach has been used trying to get over the limits of the first method using a multiscale analysis with a region overlapping evaluation.
 \end{abstract}
@@ -37,12 +38,12 @@ Section \ref{dataset} describes the Datasets chosen for the experiment both for 
 
 
 \section{The Dataset}\label{dataset}
-The dataset used for the training is composed, for the positive example, of the \emph{ViPeR Dataset} and for the negative examples of a custom-made one (see Figures \ref{fig:dataset} a-e), where one can find background, objects and ``pieces'' of people. 
+The dataset used for the training is composed, for the positive example, of the \emph{ViPeR Dataset} and for the negative examples of a custom-made one (see Figures \ref{fig:dataset} a-e), where it is possible to find background, different types of objects and ``pieces'' of people. 
 The size of the images is 48x128 pixels which we treat as the base dimension for the window (Section \ref{algorithm}). In total we used more than 6000 images for the training.
 
 For the validation and the training we took a set of videos from \emph{3dPes} (for example Figure \ref{fig:dataset} f) of about 200 frames each on average where from 1 to 10 persons walk in the scene. One of the major obstacles of this dataset is the difficult light condition.
 
-Dataset annotations have been done manually for the whole set, which leads sometimes to a little misalignment with the region detected: this affects the evaluation of the performance both in positive and in negative, thus we think that the total effect can be neglected.
+Dataset annotations have been made manually for the whole set, which leads sometimes to a little misalignment with the region detected: this affects the evaluation of the performance both in positive and in negative, thus we think that the total effect can be neglected.
 \\
 \begin{figure}[h!]
 \centering
@@ -84,7 +85,7 @@ This allows us to build a mask that highlights only the regions of the frame in 
 \label{fig:mask}
 \end{figure}
 
-Once the mask has been calculated we perform the ``sliding window'' on the frame in exam (Figure \ref{fig:mask}b): a fixed-scale (with respect to the base one) window scans the frame and try for detection only if the number of white pixels, in the same ROI of the mask, is over a given threshold. For these windows we extract the feature vectors (HOG descriptor \footnote{HOG parameters: 8 orientations bins, 16x16 pixels per cell, 1x1 cells per block}) and we send them to the SVM classifier to get a prediction of the class they belong to: Person or Non Person. We use a probabilistic approach for the matching, which also allows us to discard multiple detections around the same ROI: we choose only those predictions that have the probability higher of a fixed threshold. For what concerns the classifier, we choose to use the linear kernel instead of the intersection one because of the less computational cost. At this point it is still possible to have multiple detections for a single person: for this reason we perform \emph{Non Maxima Suppression} by keeping, in the neighbourhood  of a detected person, only the bounding box with the higher probability.
+Once the mask has been calculated we perform the ``sliding window'' on the frame in exam (Figure \ref{fig:mask}b): a fixed-scale window (with respect to the base one) scans the frame and try for detection only if the number of white pixels, in the same ROI of the mask, is over a given threshold. For these windows we extract the feature vectors (HOG descriptor \footnote{HOG parameters: 8 orientations bins, 16x16 pixels per cell, 1x1 cells per block}) and we send them to the SVM classifier to get a prediction of the class they belong to: Person or Non Person. We use a probabilistic approach for the matching, which also allows us to discard multiple detections around the same ROI: we choose only those predictions that have the probability higher of a fixed threshold. For what concerns the classifier, we choose to use the linear kernel instead of the intersection one because of the less computational cost. At this point it is still possible to have multiple detections for a single person: for this reason we perform \emph{Non Maxima Suppression} by keeping, in the neighbourhood  of a detected person, only the bounding box with the higher probability.
 
 Afterwards one improvement has been made to the algorithm and one of its most important limits has been overcome: we introduced the multiscale detection by cycling on the dimension of the sliding window. 
 
@@ -92,7 +93,7 @@ The results obtained from our detector and the variations due to the multiscale 
 \
 \begin{figure}[h!]
 \centering
-\subfigure[]{\includegraphics[height=10cm]{immagine1.JPG} }
+{\includegraphics[height=10cm]{immagine1.JPG} }
 
 \caption{Example of detection in a scene with two people.}
 \label{fig:algorithm detection}
@@ -139,7 +140,7 @@ The first graph (Figure \ref{fig:step}) shows how the method performs worse by i
 \label{fig:step}
 \end{figure}
 
-The second chart (Figure \ref{fig:cvalue}) show the consequences of the variation of the C-value with single-scale of the sliding window (a) and multiscale (b) related to the best parameters choosen by tuning them on the entire validation set. It is clear how the general performance of the algorithm, given by the F1-Score, does not change significantly from the first to the second case; on the contrary there is a slightly larger difference in terms of precision and recall (see Table \ref{tab:res}). In fact with multiscale the recall increases because, by looking for people of ``different sizes'', the algorithm has more possibilities of detecting a person; however on the other side, because of the low robustness of HOG descriptors,  the precision decreases: in our case this is not due to the increasing of the number of false positives but to an incorrect positioning of the detection window. 
+The second chart (Figure \ref{fig:cvalue}) show the consequences of the variation of the C-value with single-scale of the sliding window (a) and multiscale (b) related to the best parameters chosen by tuning them on the entire validation-set. It is clear how the general performance of the algorithm, given by the F1-Score, does not change significantly from the first to the second case; on the contrary there is a slightly larger difference in terms of precision and recall (see Table \ref{tab:res}). In fact with multiscale the recall increases because, by looking for people of ``different sizes'', the algorithm has more possibilities of detecting a person; however on the other side, because of the low robustness of HOG descriptors,  the precision decreases: in our case this is not due to the increasing of the number of false positives but to an incorrect positioning of the detection window. 
 
 \begin{figure}[h!]
 \centering
@@ -159,13 +160,13 @@ The second chart (Figure \ref{fig:cvalue}) show the consequences of the variatio
 \textbf{Precision} & 0.775 & 0.690\\
 \textbf{F1-score} & 0.740& 0.755\\
 \end{tabular}
-\caption{Final results with the best parameters of each algorithm: fixed scale = 0.8, step = 11 (for both algorithms), match threshold = 0.85 for single-scale and 0.9 for multiscale, mask threshold = 0.4 for single-scale and 0.35 for multiscale. Accuracy, Precision, Recall and F1-score represent the Mean Average value of each measure on the Validation Set. }
+\caption{Final results with the best parameters of each algorithm: fixed scale = 0.8, step = 11 (for both algorithms), match threshold = 0.85 for single-scale and 0.9 for multiscale, mask threshold = 0.4 for single-scale and 0.35 for multiscale. Accuracy, Precision, Recall and F1-score represent the Mean Average value of each measure on the Validation-Set. }
 \label{tab:res}
 \end{table}
 \pagebreak
 
 \section{Discussion}\label{discussion}
-In this report we implemented a people detection algorithm: in particular we proposed two variations, one based on fixed scale detection and the other on multiscale, that is an improvement to the first solution. Despite the better results, the greater computational cost of the multiscale does not let the algorithm run real-time like the single-scale does. 
+In this report we implemented a people detection algorithm; in particular we proposed two variations, one based on fixed scale detection and the other on multiscale, that is an improvement to the first solution. Despite the better results, the greater computational cost of the multiscale does not let the algorithm run real-time like the single-scale does. 
 Interesting results are obtained using the multiscale in those videos where there is a grater number of people: with multiscale we can better manage the ``crowd'' achieving improvements in classification performances (see Table \ref{tab:performance comparison}).
 
 

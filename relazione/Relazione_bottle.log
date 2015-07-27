@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.7.25)  26 JUL 2015 14:18
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9) (preloaded format=pdflatex 2015.7.25)  27 JUL 2015 09:05
 entering extended mode
 **Relazione_bottle.tex
 ("C:\Users\User\Desktop\PROGETTO OK\trunk\relazione\Relazione_bottle.tex"
@@ -282,11 +282,11 @@ LaTeX Font Info:    ... okay on input line 14.
 \makeMPintoPDFobject=\count113
 \everyMPtoPDFconversion=\toks24
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 20.
+LaTeX Font Info:    Try loading font information for U+msa on input line 21.
  (C:\Users\User\Desktop\folde\tex\latex\amsfonts\umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 20.
+LaTeX Font Info:    Try loading font information for U+msb on input line 21.
 
 (C:\Users\User\Desktop\folde\tex\latex\amsfonts\umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -297,58 +297,58 @@ pt x 128.48pt>
 File: 000_45.PNG Graphic file (type png)
 
 <use 000_45.PNG>
-Package pdftex.def Info: 000_45.PNG used on input line 49.
+Package pdftex.def Info: 000_45.PNG used on input line 50.
 (pdftex.def)             Requested size: 32.00987pt x 85.35826pt.
  <004_0.PNG, id=13, 48.18pt x 128.48pt>
 File: 004_0.PNG Graphic file (type png)
  <use 004_0.PNG>
-Package pdftex.def Info: 004_0.PNG used on input line 50.
+Package pdftex.def Info: 004_0.PNG used on input line 51.
 (pdftex.def)             Requested size: 32.00987pt x 85.35826pt.
 
 <009_45.PNG, id=14, 48.18pt x 128.48pt>
 File: 009_45.PNG Graphic file (type png)
  <use 009_45.PNG>
-Package pdftex.def Info: 009_45.PNG used on input line 51.
+Package pdftex.def Info: 009_45.PNG used on input line 52.
 (pdftex.def)             Requested size: 32.00987pt x 85.35826pt.
 
 <img_3300.JPG, id=15, 48.18pt x 128.48pt>
 File: img_3300.JPG Graphic file (type jpg)
  <use img_3300.JPG>
-Package pdftex.def Info: img_3300.JPG used on input line 52.
+Package pdftex.def Info: img_3300.JPG used on input line 53.
 (pdftex.def)             Requested size: 32.00987pt x 85.35826pt.
 
 <img_60040.JPG, id=16, 48.18pt x 128.48pt>
 File: img_60040.JPG Graphic file (type jpg)
  <use img_60040.JPG>
-Package pdftex.def Info: img_60040.JPG used on input line 53.
+Package pdftex.def Info: img_60040.JPG used on input line 54.
 (pdftex.def)             Requested size: 32.00987pt x 85.35826pt.
 
 <video0031.JPG, id=17, 706.64pt x 578.16pt>
 File: video0031.JPG Graphic file (type jpg)
  <use video0031.JPG>
-Package pdftex.def Info: video0031.JPG used on input line 54.
+Package pdftex.def Info: video0031.JPG used on input line 55.
 (pdftex.def)             Requested size: 104.32014pt x 85.35826pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 45--60
+Underfull \hbox (badness 10000) in paragraph at lines 46--61
 
  []
 
 <schema.png, id=18, 690.9012pt x 258.7266pt>
 File: schema.png Graphic file (type png)
  <use schema.png>
-Package pdftex.def Info: schema.png used on input line 67.
+Package pdftex.def Info: schema.png used on input line 68.
 (pdftex.def)             Requested size: 435.78593pt x 163.19598pt.
 
 <mask.png, id=20, 382.42876pt x 331.2375pt>
 File: mask.png Graphic file (type png)
  <use mask.png>
-Package pdftex.def Info: mask.png used on input line 81.
+Package pdftex.def Info: mask.png used on input line 82.
 (pdftex.def)             Requested size: 131.39537pt x 113.81102pt.
 
 <mask2.png, id=21, 476.53032pt x 438.8897pt>
 File: mask2.png Graphic file (type png)
  <use mask2.png>
-Package pdftex.def Info: mask2.png used on input line 82.
+Package pdftex.def Info: mask2.png used on input line 83.
 (pdftex.def)             Requested size: 123.56775pt x 113.81102pt.
  [2 <C:/Users/User/Desktop/PROGETTO OK/trunk/relazione/000_45.PNG> <C:/Users/Us
 er/Desktop/PROGETTO OK/trunk/relazione/004_0.PNG> <C:/Users/User/Desktop/PROGET
@@ -359,7 +359,7 @@ ers/User/Desktop/PROGETTO OK/trunk/relazione/schema.png>]
 <immagine1.JPG, id=30, 381.67593pt x 334.24875pt>
 File: immagine1.JPG Graphic file (type jpg)
  <use immagine1.JPG>
-Package pdftex.def Info: immagine1.JPG used on input line 95.
+Package pdftex.def Info: immagine1.JPG used on input line 96.
 (pdftex.def)             Requested size: 324.92693pt x 284.52756pt.
 
 
@@ -367,41 +367,41 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [3 <C:/Users/User/Desktop/PROGETTO OK/trunk/relazione/mask.png> <C:/Users/User/
 Desktop/PROGETTO OK/trunk/relazione/mask2.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 106--108
+Underfull \hbox (badness 10000) in paragraph at lines 107--109
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 114--116
+Underfull \hbox (badness 10000) in paragraph at lines 115--117
 
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 117.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 118.
 
 (C:\Users\User\Desktop\folde\tex\latex\base\omscmr.fd
 File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 117.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 118.
  [4 <C:/Users/User/Desktop/PROGETTO OK/trunk/relazione/immagine1.JPG>]
 <step_variation.png, id=41, 588.2778pt x 388.3308pt>
 File: step_variation.png Graphic file (type png)
  <use step_variation.png>
-Package pdftex.def Info: step_variation.png used on input line 137.
+Package pdftex.def Info: step_variation.png used on input line 138.
 (pdftex.def)             Requested size: 280.16194pt x 184.9429pt.
 
 <CVariation_fixedscale.png, id=42, 595.9866pt x 396.0396pt>
 File: CVariation_fixedscale.png Graphic file (type png)
 
 <use CVariation_fixedscale.png>
-Package pdftex.def Info: CVariation_fixedscale.png used on input line 146.
+Package pdftex.def Info: CVariation_fixedscale.png used on input line 147.
 (pdftex.def)             Requested size: 290.52888pt x 193.06398pt.
 
 <Cvariation_multiscale.png, id=43, 588.2778pt x 388.3308pt>
 File: Cvariation_multiscale.png Graphic file (type png)
 
 <use Cvariation_multiscale.png>
-Package pdftex.def Info: Cvariation_multiscale.png used on input line 147.
+Package pdftex.def Info: Cvariation_multiscale.png used on input line 148.
 (pdftex.def)             Requested size: 290.52888pt x 191.7888pt.
 
 
@@ -419,14 +419,11 @@ LaTeX Warning: Text page 6 contains only floats.
 ]
 
 LaTeX Warning: Reference `tab:performance comparison' on page 7 undefined on in
-put line 169.
+put line 170.
 
 [7] ("C:\Users\User\Desktop\PROGETTO OK\trunk\relazione\Relazione_bottle.aux")
 
 LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
  ) 
 Here is how much of TeX's memory you used:
@@ -452,7 +449,7 @@ Users\User\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecbx1000
 ec\dpi600\ecrm1728.pk><C:/Users/User/Desktop/folde/fonts/type1/public/amsfonts/
 cm/cmmi10.pfb><C:/Users/User/Desktop/folde/fonts/type1/public/amsfonts/cm/cmr10
 .pfb><C:/Users/User/Desktop/folde/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on Relazione_bottle.pdf (7 pages, 741496 bytes).
+Output written on Relazione_bottle.pdf (7 pages, 736696 bytes).
 PDF statistics:
  373 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
